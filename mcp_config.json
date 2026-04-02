@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "flight": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        ".",
+        "src/aero_ref/flight_server.py"
+      ]
+    },
+    "bigquery": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        ".",
+        "src/aero_ref/bigquery_server.py"
+      ]
+    }
+  }
+}

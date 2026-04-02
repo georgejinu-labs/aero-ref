@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://georgejinu-labs.github.io/aero-ref/" />
+  <title>aero-ref &mdash; MCP Flight Agent Under the Hood</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700;900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#080c10;--panel:#0d1318;--panel2:#0a1018;--border:#1a2630;--border2:#223040;
+      --amber:#f5a623;--adim:#7a5212;--abg:rgba(245,166,35,.07);
+      --cyan:#00d4ff;--cdim:#004f5e;--cbg:rgba(0,212,255,.07);
+      --green:#39ff6e;--gdim:#0f4020;--gbg:rgba(57,255,110,.07);
+      --purple:#b8a6ff;--pdim:#3a2870;--pbg:rgba(184,166,255,.07);
+      --red:#ff3c5a;--rdim:#5a0f1a;--rbg:rgba(255,60,90,.07);
+      --text:#c8d8e4;--dim:#7a9cb0;--mid:#b0c8d4;--white:#eef4f8;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.035;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+    body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,.012) 2px,rgba(0,212,255,.012) 4px)}
+    nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
+      padding:1rem 2.5rem;border-bottom:1px solid var(--border);background:rgba(8,12,16,.96);backdrop-filter:blur(12px)}
+    .nl{font-family:'Share Tech Mono',monospace;font-size:.88rem;color:var(--amber);letter-spacing:.12em;display:flex;align-items:center;gap:.6rem}
+    .np{width:7px;height:7px;border-radius:50%;background:var(--amber);animation:pulse 2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+    .nlinks{display:flex;gap:1.75rem}
+    .nlinks a{font-size:.76rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-decoration:none;transition:color .2s}
+    .nlinks a:hover{color:var(--cyan)}
+    .ngh{font-family:'Share Tech Mono',monospace;font-size:.75rem;color:var(--amber);border:1px solid var(--adim);padding:.4rem .9rem;text-decoration:none;transition:all .2s}
+    .ngh:hover{background:var(--amber);color:var(--bg)}
+    .page{max-width:900px;margin:0 auto;padding:3rem 2rem 5rem;position:relative;z-index:1}
+    .hero{margin-bottom:2.5rem;padding-bottom:2.5rem;border-bottom:1px solid var(--border)}
+    .ey{font-family:'Share Tech Mono',monospace;font-size:.76rem;color:var(--cyan);letter-spacing:.2em;text-transform:uppercase;display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+    .ey::before{content:'';width:24px;height:1px;background:var(--cyan)}
+    h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.2rem,5vw,3.5rem);font-weight:900;text-transform:uppercase;letter-spacing:-.02em;color:var(--white);line-height:1;margin-bottom:.75rem}
+    h1 .acc{color:var(--amber)}
+    .hs{color:var(--mid);font-size:.9rem;max-width:620px;line-height:1.7;margin-bottom:1.25rem}
+    .hk{display:flex;flex-wrap:wrap;gap:.5rem}
+    .pill{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.08em;padding:.25rem .65rem;border:1px solid}
+    .pa{border-color:var(--adim);color:var(--amber)}.pc{border-color:var(--cdim);color:var(--cyan)}.pg{border-color:var(--gdim);color:var(--green)}.pp{border-color:var(--pdim);color:var(--purple)}
+    .toc{background:var(--panel);border:1px solid var(--border);padding:1.25rem 1.5rem;margin-bottom:2.5rem}
+    .toc-t{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:.85rem}
+    .toc a{font-size:.82rem;color:var(--cyan);text-decoration:none;display:block;padding:.2rem 0;transition:color .15s}
+    .toc a:hover{color:var(--white)}.toc a span{color:var(--amber);margin-right:.5rem;font-family:'Share Tech Mono',monospace;font-size:.75rem}
+    h2{font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:900;text-transform:uppercase;color:var(--white);letter-spacing:-.01em;margin:2.5rem 0 1.25rem}
+    .card{border:1px solid var(--border);background:var(--panel);margin-bottom:1.25rem;overflow:hidden}
+    .pb2{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;font-family:'Share Tech Mono',monospace;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+    .bnum{font-size:.68rem;padding:.2rem .5rem;border:1px solid currentColor;opacity:.7}
+    .bs{background:rgba(0,212,255,.08);color:var(--cyan);border-bottom-color:var(--cdim)}
+    .bd2{background:rgba(57,255,110,.08);color:var(--green);border-bottom-color:var(--gdim)}
+    .bl{background:rgba(184,166,255,.08);color:var(--purple);border-bottom-color:var(--pdim)}
+    .bt{background:rgba(245,166,35,.08);color:var(--amber);border-bottom-color:var(--adim)}
+    .blo{background:rgba(200,216,228,.05);color:var(--text);border-bottom-color:var(--border2)}
+    .bw2{background:rgba(255,60,90,.08);color:var(--red);border-bottom-color:var(--rdim)}
+    .bn{background:rgba(26,38,48,.6);color:var(--mid);border-bottom-color:var(--border)}
+    .pb{padding:1.25rem}
+    .ll{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:.6rem;margin-top:.9rem}
+    .ll:first-child{margin-top:0}
+    pre{background:#040609;border:1px solid var(--border);padding:1.1rem 1.4rem;font-family:'Share Tech Mono',monospace;font-size:.8rem;line-height:2.1;color:var(--text);overflow-x:auto;white-space:pre;margin:.6rem 0}
+    code{font-family:'Share Tech Mono',monospace;font-size:.8rem;background:rgba(0,212,255,.08);color:var(--cyan);padding:.1rem .4rem}
+    .c{color:#00d4ff;font-weight:600}.a{color:#f5a623;font-weight:600}.g{color:#39ff6e;font-weight:600}.p{color:#b8a6ff;font-weight:600}.r{color:#ff3c5a;font-weight:600}.d{color:#8fb8c8}.w{color:#eef4f8;font-weight:600}
+    .mx{background:var(--panel2);border-left:2px solid var(--purple);padding:1rem 1.25rem;margin:.75rem 0;font-size:.85rem;line-height:1.75;color:var(--text)}
+    .mxl{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:.5rem}
+    .mx p{margin-bottom:.4rem}.mx p:last-child{margin-bottom:0}
+    .ins{background:var(--gbg);border:1px solid var(--gdim);padding:.85rem 1.1rem;font-size:.85rem;line-height:1.7;color:var(--text);margin:.75rem 0}
+    .ins strong{color:var(--green)}
+    .wrn{background:var(--rbg);border:1px solid var(--rdim);padding:.85rem 1.1rem;font-size:.85rem;line-height:1.7;color:var(--text);margin:.75rem 0}
+    .wrn strong{color:var(--red)}
+    .amb{background:var(--abg);border:1px solid var(--adim);padding:.85rem 1.1rem;font-size:.85rem;line-height:1.7;color:var(--text);margin:.75rem 0}
+    .amb strong{color:var(--amber)}
+    table{width:100%;border-collapse:collapse;font-size:.82rem;margin:.75rem 0}
+    th{background:#0a1018;color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;padding:.65rem 1rem;text-align:left;border-bottom:1px solid var(--border)}
+    td{padding:.7rem 1rem;border-bottom:1px solid #0f1820;color:var(--text);vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    td:first-child{font-family:'Share Tech Mono',monospace;color:var(--cyan);font-size:.8rem}
+    .tc{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+    .cb{background:#040609;border:1px solid var(--border);padding:1rem}
+    .cbt{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem}
+    .bad{color:var(--red)}.good2{color:var(--green)}
+    .tbw{margin:.6rem 0}
+    .tbl{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--dim);letter-spacing:.1em;margin-bottom:.3rem}
+    .tb{height:26px;display:flex;border:1px solid var(--border);overflow:hidden;background:#040609}
+    .ts{display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:.66rem;font-weight:700;overflow:hidden;white-space:nowrap}
+    .tsub{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--dim);margin-top:.25rem}
+    .s3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin:.75rem 0}
+    .sc{background:var(--panel);padding:1.25rem}
+    .sct{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;text-transform:uppercase;margin-bottom:.5rem}
+    .scd{font-size:.85rem;color:var(--dim);line-height:1.6}
+    hr{border:none;border-top:1px solid var(--border);margin:2rem 0}
+    .ban{background:var(--panel);border:1px solid var(--border);padding:.75rem 1.25rem;margin-bottom:2rem;font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--dim);line-height:1.7}
+    .ban a{color:var(--cyan);text-decoration:none}.ban a:hover{color:var(--white)}
+    footer{border-top:1px solid var(--border);margin-top:4rem;padding:1.75rem 2.5rem;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+    .fl{font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--amber)}
+    .fr{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--dim)}
+    @media(max-width:680px){nav{padding:.85rem 1.25rem}.nlinks{display:none}.page{padding:2rem 1.25rem 4rem}.tc,.s3{grid-template-columns:1fr}footer{flex-direction:column;gap:.75rem;text-align:center}}
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nl"><div class="np"></div>GEORGEJINU-LABS / AERO-REF</div>
+  <div class="nlinks">
+    <a href="#phase0">Startup</a><a href="#phase1">Discovery</a><a href="#phase2">LLM Calls</a>
+    <a href="#loop">The Loop</a><a href="#tokens">Tokens</a><a href="#maxsteps">max_steps</a>
+    <a href="#second-turn">Turn 2</a><a href="#stack">Summary</a>
+  </div>
+  <a class="ngh" href="https://github.com/georgejinu-labs/aero-ref" target="_blank">[ GITHUB ]</a>
+</nav>
+<div class="page">
+
+<div class="ban">
+  <strong style="color:var(--amber)">Published:</strong> <a href="https://georgejinu-labs.github.io/aero-ref/">https://georgejinu-labs.github.io/aero-ref/</a>
+  &nbsp;&middot;&nbsp; <strong style="color:var(--amber)">Repo:</strong> <a href="https://github.com/georgejinu-labs/aero-ref">github.com/georgejinu-labs/aero-ref</a>
+</div>
+
+<div class="hero">
+  <div class="ey">Multi-Server Agentic AI &middot; Local Inference</div>
+  <h1>AERO-REF &mdash; <span class="acc">Under the Hood</span></h1>
+  <p class="hs">A phase-by-phase walkthrough of every log line from a real agent run &mdash; mapped to the exact component that produced it. Two MCP servers, six tools, one local LLM, zero cloud inference.</p>
+  <div class="hk">
+    <span class="pill pa">qwen2.5:3b &middot; Ollama</span>
+    <span class="pill pc">LangGraph &middot; mcp-use</span>
+    <span class="pill pg">FastMCP &middot; BigQuery</span>
+    <span class="pill pp">AeroAPI &middot; FlightAware</span>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-t">// Contents</div>
+  <a href="#phase0"><span>00</span>App Startup &mdash; two MCP servers launch as subprocesses</a>
+  <a href="#phase1"><span>01</span>Tool Discovery &mdash; mcp-use auto-wraps 6 tools for LangChain</a>
+  <a href="#phase2"><span>02</span>LLM Call #1 &mdash; qwen2.5 reads 1,219-token context, picks first tool</a>
+  <a href="#phase3"><span>03</span>BigQuery tool fires &mdash; catalog lookup returns KIAH metadata</a>
+  <a href="#phase4"><span>04</span>LLM Calls #2 and #3 &mdash; redundant lookup, then flight counts call</a>
+  <a href="#phase5"><span>05</span>AeroAPI tool &mdash; live flight counts from FlightAware via MCP</a>
+  <a href="#phase6"><span>06</span>LLM Call #4 &mdash; final synthesis, tool_calls=[], loop exits</a>
+  <a href="#loop"><span>07</span>The Full Loop &mdash; what LangGraph actually ran for Turn 1</a>
+  <a href="#tokens"><span>08</span>Context Window and Tokens &mdash; how the prompt grows each step</a>
+  <a href="#maxsteps"><span>09</span>max_steps &mdash; the safety brake, when it fires, how to handle it</a>
+  <a href="#second-turn"><span>10</span>Turn 2 &mdash; KHOU missing from catalog, agent goes off-rails</a>
+  <a href="#stack"><span>11</span>Component Summary &mdash; every piece and what it did in this run</a>
+</div>
+
+<!-- ===== 00 ===== -->
+<div class="card" id="phase0">
+  <div class="pb2 bs"><span class="bnum">00</span> App startup &mdash; two MCP servers launch as subprocesses</div>
+  <div class="pb">
+    <div class="ll">From your log:</div>
+<pre><span class="d">&#x1F50C; Found 0 existing sessions &rarr; creating new ones...</span>
+<span class="c">Connecting to MCP implementation: uv</span>          <span class="d">&larr; flight_server.py</span>
+<span class="c">Starting StdioConnectionManager task</span>
+<span class="g">StdioConnectionManager connected successfully</span>
+<span class="d">&rarr; initialize  (16.826s)  &larr; cold uv dep resolution + subprocess startup</span>
+<span class="d">&rarr; tools/list  (0.008s)</span>   <span class="g">&larr; 4 tools returned</span>
+<span class="d">&rarr; resources/list (0.004s), prompts/list (0.003s)  &larr; both empty</span>
+<span class="g">MCP session initialized with 4 tools, 0 resources, 0 prompts</span>
+
+<span class="d">--- same sequence repeats for bigquery_server.py (21.006s init) ---</span>
+<span class="g">MCP session initialized with 2 tools, 0 resources, 0 prompts</span>
+<span class="g">&#10003; Created 2 new sessions  |  6 tools total across both servers</span></pre>
+    <div class="mx">
+      <div class="mxl">What this means</div>
+      <p><code>MCPClient.from_dict()</code> reads <code>mcp_config.json</code> and <strong>spawns each server as a local subprocess</strong> via <code>uv run</code>. Communication is over <strong>stdio pipes</strong> &mdash; not HTTP. This is the MCP &ldquo;stdio transport&rdquo; mode. The protocol then does an MCP handshake: <code>initialize</code> &rarr; <code>tools/list</code> &rarr; <code>resources/list</code> &rarr; <code>prompts/list</code>.</p>
+      <p>The 16&ndash;21 second init times are <strong>cold <code>uv</code> dependency resolution</strong>. Subsequent runs are much faster once uv&rsquo;s cache is warm. All of this happens <strong>before you type any query.</strong></p>
+    </div>
+<pre><span class="d">// mcp_config.json &mdash; the file that drives all of this</span>
+{
+  <span class="c">"flight"</span>: {
+    "command": <span class="a">"uv"</span>,
+    "args": <span class="g">["run", "--directory", "C:\...\aero-ref", "src/aero_ref/flight_server.py"]</span>
+  },
+  <span class="c">"bigquery"</span>: {
+    "command": <span class="a">"uv"</span>,
+    "args": <span class="g">["run", "--directory", "C:\...\aero-ref", "src/aero_ref/bigquery_server.py"]</span>
+  }
+}</pre>
+  </div>
+</div>
+
+<!-- ===== 01 ===== -->
+<div class="card" id="phase1">
+  <div class="pb2 bd2"><span class="bnum">01</span> Tool discovery &mdash; mcp-use auto-wraps 6 tools for LangChain</div>
+  <div class="pb">
+    <div class="ll">From your log:</div>
+<pre><span class="c">Loaded 4 new tools for connector (flight server):</span>
+  <span class="a">get_airport_flights</span>        <span class="d">&larr; full board: arrivals + departures + scheduled</span>
+  <span class="a">get_airport_arrivals</span>       <span class="d">&larr; recent landings, ordered by actual_on desc</span>
+  <span class="a">get_airport_departures</span>     <span class="d">&larr; recent takeoffs, ordered by actual_off desc</span>
+  <span class="a">get_airport_flight_counts</span>  <span class="d">&larr; summary counts only &mdash; fastest snapshot</span>
+
+<span class="c">Loaded 2 new tools for connector (bigquery server):</span>
+  <span class="a">list_demo_airports</span>  <span class="d">&larr; SELECT * FROM aero_reference.airports LIMIT ?</span>
+  <span class="a">get_demo_airport</span>    <span class="d">&larr; WHERE airport_code = ? (ICAO / IATA / LID, case-insensitive)</span>
+
+<span class="g">&#x1F6E0;  Created 6 LangChain tools from client: 6 tools, 0 resources, 0 prompts</span>
+<span class="g">&#x1F9F0;  Found 6 tools across all connectors</span>
+<span class="g">&#x1F9E0;  Agent ready with tools: get_airport_flights, get_airport_arrivals...</span></pre>
+    <div class="mx">
+      <div class="mxl">What this means</div>
+      <p><code>mcp-use</code> sent the MCP <code>tools/list</code> protocol message to each server and <strong>automatically converted every tool schema into a LangChain <code>StructuredTool</code></strong>. This is the core job of mcp-use &mdash; without it, you&rsquo;d write a LangChain tool wrapper for every MCP tool manually.</p>
+      <p>The LLM has no awareness these are MCP tools. It simply receives their <strong>name + description strings injected into the system prompt</strong> and picks them by text matching at inference time.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 02 ===== -->
+<div class="card" id="phase2">
+  <div class="pb2 bl"><span class="bnum">02</span> LLM Call #1 &mdash; qwen2.5 reads 1,219-token context, picks first tool</div>
+  <div class="pb">
+    <div class="ll">Exact prompt sent to qwen2.5:3b (condensed):</div>
+<pre>System: <span class="p">You are a helpful AI assistant.
+        You have access to the following tools:</span>
+        <span class="c">- get_airport_flights: All recent and upcoming flights at an airport...</span>
+        <span class="c">- get_airport_arrivals: Flights that have recently arrived...</span>
+        <span class="c">- get_airport_departures: Flights that have recently departed...</span>
+        <span class="c">- get_airport_flight_counts: Summary counts by status...</span>
+        <span class="c">- list_demo_airports: List rows from the demo airports table...</span>
+        <span class="c">- get_demo_airport: Look up one airport by code...</span>
+        <span class="p">You can call tools on two MCP servers:
+        1) bigquery &mdash; catalog  2) flight &mdash; live AeroAPI
+        Typical flow: airport metadata from BigQuery when useful,
+        live boards from flight tools. Say which source facts came from.</span>
+Human: <span class="a">"At Houston Bush (KIAH), use our airport reference for the official name
+        and city. Then summarize live activity: flight counts (departed,
+        enroute, scheduled arrivals and departures), plus whether recent
+        arrivals or departures look unusually delayed."</span></pre>
+    <div class="ll">LLM output (357 seconds &mdash; very slow first call):</div>
+<pre>tool_calls: [{
+  "name": <span class="c">"list_demo_airports"</span>,    <span class="d">&larr; LLM picked the broadest catalog tool first</span>
+  "args": {},                    <span class="d">&larr; no arguments needed, returns all airports</span>
+  "type": "tool_call"
+}]
+content: <span class="d">""  &larr; empty. LLM returned ONLY a tool call. No text answer yet.</span>
+
+input_tokens:  <span class="w">1,219</span>
+output_tokens: <span class="w">18</span>      <span class="d">&larr; just the JSON tool call</span>
+total_tokens:  <span class="w">1,237</span></pre>
+    <div class="mx">
+      <div class="mxl">What this means</div>
+      <p><code>langchain-ollama</code> (ChatOllama) sent this prompt to <code>localhost:11434</code>. The LLM read all 6 tool descriptions and matched the user&rsquo;s request for &ldquo;airport reference&rdquo; against <code>list_demo_airports: List rows from the demo airports table</code>. <strong>Pure text matching &mdash; no deeper reasoning.</strong></p>
+      <p>The 357-second time is dominated by <strong>model cold load</strong>: <code>load_duration: 33.4 seconds</code> + <code>prompt_eval_duration: 316 seconds</code> to process 1,219 input tokens at CPU speed. Only 18 tokens generated.</p>
+      <p>LangGraph sees <code>tool_calls</code> is not empty &rarr; does <strong>not</strong> route to END &rarr; routes to the <code>tools</code> node. The loop continues.</p>
+    </div>
+    <div class="amb"><strong>Note on tool choice:</strong> The LLM chose <code>list_demo_airports</code> (returns all airports) instead of <code>get_demo_airport</code> (direct lookup by code). It already knew the ICAO code was KIAH from the user message. A smarter model would call <code>get_demo_airport(airport_code="KIAH")</code> directly and save a round trip.</div>
+  </div>
+</div>
+
+<!-- ===== 03 ===== -->
+<div class="card" id="phase3">
+  <div class="pb2 bt"><span class="bnum">03</span> BigQuery tool fires &mdash; catalog lookup returns KIAH metadata</div>
+  <div class="pb">
+    <div class="ll">From your log:</div>
+<pre>MCP tool <span class="c">"list_demo_airports"</span> received input: {'limit': 50}
+&rarr; stdio:bigquery_server.py &rarr; tools/call    <span class="d">(2.293s)</span>
+&larr; stdio:bigquery_server.py &larr; tools/call
+
+Tool result (structured):
+{
+  "table": <span class="g">"project-b4252fcd.aero_reference.airports"</span>,
+  "count": <span class="w">2</span>,
+  "rows": [
+    { "airport_code": <span class="c">"KIAH"</span>, "name": <span class="g">"Houston Bush Intctl"</span>, "city": <span class="g">"Houston"</span>, "state": "TX",
+      "code_iata": "IAH", "elevation": 97, "timezone": "America/Chicago", ... },
+    { "airport_code": <span class="c">"KSFO"</span>, "name": <span class="g">"San Francisco Intl"</span>, "city": <span class="g">"San Francisco"</span>, "state": "CA", ... }
+  ]
+}</pre>
+    <div class="mx">
+      <div class="mxl">What this means</div>
+      <p>LangGraph&rsquo;s <code>tools</code> node passes the tool call to mcp-use, which sends a <code>tools/call</code> MCP message to <code>bigquery_server.py</code> over stdio. The server executes the BigQuery SQL and returns 2 rows &mdash; your demo catalog.</p>
+      <p>mcp-use wraps this result in a <code>ToolMessage</code> and <strong>appends it to the conversation state</strong>. LangGraph routes back to the <code>model</code> node for another LLM call. The prompt is now longer.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 04 ===== -->
+<div class="card" id="phase4">
+  <div class="pb2 bl"><span class="bnum">04</span> LLM Calls #2 and #3 &mdash; redundant lookup, then the right tool call</div>
+  <div class="pb">
+    <div class="ll">LLM Call #2 output (153 seconds):</div>
+<pre>content: <span class="d">"To proceed, I need to find the official name and city for Houston Bush
+           (KIAH). Let's use the get_demo_airport function with airport code 'KIAH'..."</span>
+tool_calls: [{
+  "name": <span class="c">"get_demo_airport"</span>,
+  "args": { "airport_code": <span class="a">"KIAH"</span> }
+}]
+input_tokens: 1,537  output_tokens: 69  <span class="d">&larr; context grew by +318 tokens (the tool result)</span></pre>
+    <div class="wrn"><strong>Redundancy alert:</strong> The LLM already had KIAH&rsquo;s full metadata from the previous <code>list_demo_airports</code> result. Calling <code>get_demo_airport(KIAH)</code> again returned identical data. This is a <strong>3b model limitation</strong> &mdash; it didn&rsquo;t synthesize the existing context and instead re-fetched. A larger model would recognise the data was already present.</div>
+    <div class="ll">LLM Call #3 output (176 seconds) &mdash; now calls the live API:</div>
+<pre>content: <span class="d">"The official name for Houston Bush (KIAH) is Houston Bush Intercity..."
+           [fills placeholder text, no real answer yet]</span>
+tool_calls: [{
+  "name": <span class="c">"get_airport_flight_counts"</span>,
+  "args": { "airport_id": <span class="a">"KIAH"</span> }
+}]
+input_tokens: 1,765  output_tokens: 170  <span class="d">&larr; context now at 1,765 tokens</span></pre>
+    <div class="mx">
+      <div class="mxl">What this means</div>
+      <p>The LLM is making forward progress but inefficiently. By Call #3 it finally reasons: &ldquo;I have the catalog data, now I need the live counts.&rdquo; It correctly picks <code>get_airport_flight_counts</code> &mdash; the most efficient tool for summary counts, no pagination, ICAO-preferred.</p>
+      <p>Note it also wrote some content alongside the tool call (the placeholder text). LangGraph sees <code>tool_calls</code> is still non-empty and routes to the tools node <strong>ignoring the partial text</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 05 ===== -->
+<div class="card" id="phase5">
+  <div class="pb2 bt"><span class="bnum">05</span> AeroAPI tool &mdash; live flight counts from FlightAware via MCP</div>
+  <div class="pb">
+    <div class="ll">From your log:</div>
+<pre>MCP tool <span class="c">"get_airport_flight_counts"</span> received input: {'airport_id': 'KIAH'}
+&rarr; stdio:flight_server.py &rarr; tools/call    <span class="d">(1.808s)</span>
+&larr; stdio:flight_server.py &larr; tools/call
+
+Tool result:
+{
+  "airport_id": <span class="c">"KIAH"</span>,
+  "departed":            <span class="g">91</span>,
+  "enroute":            <span class="g">254</span>,
+  "scheduled_arrivals": <span class="g">1521</span>,
+  "scheduled_departures":<span class="g">1547</span>
+}</pre>
+    <div class="mx">
+      <div class="mxl">What this means</div>
+      <p><code>flight_server.py</code> wraps the AeroAPI (FlightAware) <code>GET /airports/KIAH/flights/counts</code> endpoint. The 1.8-second response time is the real HTTP call to FlightAware&rsquo;s servers. <strong>This is the only actual external network call in the entire agent run &mdash; everything else is local.</strong></p>
+      <p>The result is compact (4 numbers) because this is the counts endpoint. If you&rsquo;d asked for delay analysis, the agent would need to call <code>get_airport_arrivals</code> or <code>get_airport_departures</code> to inspect individual flight timings.</p>
+    </div>
+    <div class="ins"><strong>Architecture note:</strong> The agent correctly used two separate MCP servers for two different data sources: BigQuery for static airport catalog metadata, AeroAPI for live operational data. This is the intended pattern &mdash; static reference from BigQuery, real-time from AeroAPI.</div>
+  </div>
+</div>
+
+<!-- ===== 06 ===== -->
+<div class="card" id="phase6">
+  <div class="pb2 bl"><span class="bnum">06</span> LLM Call #4 &mdash; final synthesis, tool_calls=[], loop exits</div>
+  <div class="pb">
+    <div class="ll">LLM output (123 seconds):</div>
+<pre>content: <span class="g">"The summary of live activity at Houston Bush (KIAH) is as follows:
+           Flight Counts:
+             Departed: 91 flights that have already departed.
+             Enroute: 254 flights currently in transit.
+             Scheduled Arrivals: 1,521 flights scheduled to arrive soon.
+             Scheduled Departures: 1,547 flights scheduled to depart soon.
+           Recent Activity:
+             Recent arrivals and departures do not show any delays based on the
+             live data. However, this information is up-to-date as of now..."</span>
+
+tool_calls: <span class="g">[]</span>    <span class="d">&larr; EMPTY. LLM decided it is done.</span>
+
+input_tokens: 1,960  output_tokens: 152  total_tokens: 2,112</pre>
+    <div class="ins"><strong>LangGraph sees <code>tool_calls=[]</code> &rarr; conditional edge routes to END &rarr; loop exits. Final answer returned.</strong> The agent used 4 model calls and 3 tool calls to answer one question.</div>
+    <div class="mx">
+      <div class="mxl">What this means</div>
+      <p>The final answer is reasonable but incomplete &mdash; it says &ldquo;no delays based on live data&rdquo; but the agent never actually called <code>get_airport_arrivals</code> or <code>get_airport_departures</code> to check individual flight times. It only had summary counts. This is a <strong>hallucinated conclusion</strong> from a 3b model that treated counts as delay evidence.</p>
+      <p>A well-prompted agent or a larger model would have called the arrivals/departures endpoints to compute actual delay statistics before drawing that conclusion.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LOOP ===== -->
+<h2 id="loop">The Full Loop &mdash; what LangGraph ran for Turn 1</h2>
+<div class="card">
+  <div class="pb2 blo"><span class="bnum">07</span> LangGraph chain trace &mdash; Turn 1 complete execution</div>
+  <div class="pb">
+<pre>LangGraph chain start
+&#9474;
+&#9500;&#9472; <span class="p">ModelCallLimitMiddleware.before_model</span>   <span class="d">&larr; checks: under 24 step limit? yes.</span>
+&#9474;
+&#9500;&#9472; <span class="p">model node [LLM Call #1]</span>               <span class="d">&larr; ChatOllama &rarr; qwen2.5:3b (357s cold)</span>
+&#9474;   output: tool_calls=[<span class="c">list_demo_airports(limit=50)</span>]
+&#9474;
+&#9500;&#9472; <span class="p">ModelCallLimitMiddleware.after_model</span>    <span class="d">&larr; call_count=1</span>
+&#9474;
+&#9500;&#9472; <span class="c">tools node</span>                              <span class="d">&larr; mcp-use &rarr; bigquery_server.py (2.3s)</span>
+&#9474;   output: ToolMessage [KIAH: Houston Bush Intctl, KSFO: San Francisco Intl]
+&#9474;
+&#9500;&#9472; <span class="p">model node [LLM Call #2]</span>               <span class="d">&larr; context: 1,537 tokens (153s)</span>
+&#9474;   output: tool_calls=[<span class="c">get_demo_airport(KIAH)</span>]   <span class="d">&larr; redundant re-fetch</span>
+&#9474;
+&#9500;&#9472; <span class="c">tools node</span>                              <span class="d">&larr; bigquery_server.py again (1.2s)</span>
+&#9474;   output: ToolMessage [KIAH confirmed: Houston Bush Intctl]
+&#9474;
+&#9500;&#9472; <span class="p">model node [LLM Call #3]</span>               <span class="d">&larr; context: 1,765 tokens (176s)</span>
+&#9474;   output: partial text + tool_calls=[<span class="c">get_airport_flight_counts(KIAH)</span>]
+&#9474;
+&#9500;&#9472; <span class="c">tools node</span>                              <span class="d">&larr; flight_server.py &rarr; AeroAPI (1.8s)</span>
+&#9474;   output: ToolMessage {departed:91, enroute:254, arr:1521, dep:1547}
+&#9474;
+&#9500;&#9472; <span class="p">model node [LLM Call #4]</span>               <span class="d">&larr; context: 1,960 tokens (123s)</span>
+&#9474;   output: final text answer, tool_calls=<span class="g">[]</span>
+&#9474;
+&#9492;&#9472; <span class="p">ModelCallLimitMiddleware.after_model</span>    <span class="d">&larr; call_count=4 (of 24 max)</span>
+    <span class="g">END &larr; tool_calls=[] &rarr; conditional edge routes to END</span>
+
+Total wall time:   <span class="w">816 seconds</span>
+LLM calls:         <span class="w">4</span>
+Tool calls:        <span class="w">3</span>   <span class="d">(2x BigQuery + 1x AeroAPI)</span>
+Tokens used:       <span class="w">2,112</span>  <span class="d">(1,960 in + 152 out)</span></pre>
+  </div>
+</div>
+
+<!-- ===== TOKENS ===== -->
+<h2 id="tokens">Context Window and Tokens</h2>
+
+<div class="card">
+  <div class="pb2 bn"><span class="bnum">08a</span> What is a token?</div>
+  <div class="pb">
+    <div class="mx">
+      <div class="mxl">Definition</div>
+      <p>A token is a chunk of text &mdash; roughly <strong>0.75 words on average</strong>. The LLM does not see letters or words, it sees token IDs (numbers). Every prompt you send and every response you get is measured in tokens.</p>
+    </div>
+<pre>"At Houston Bush (KIAH), use our airport reference..."
+
+  At | Houston | Bush | (| KI | AH | ), | use | our | airport | reference...
+  tok1   tok2   tok3  tok4 tok5 tok6 tok7  tok8  tok9   tok10      tok11...
+
+Rule of thumb:
+  100  tokens &asymp;  75 words &asymp; half a page
+  1000 tokens &asymp; 750 words &asymp; a short article
+  Your full Turn 1 used 2,112 tokens &asymp; 1,580 words</pre>
+  </div>
+</div>
+
+<div class="card">
+  <div class="pb2 bn"><span class="bnum">08b</span> How the context window grew across 4 LLM calls</div>
+  <div class="pb">
+    <div class="tbw">
+      <div class="tbl">LLM Call #1 &mdash; 1,219 input tokens</div>
+      <div class="tb">
+        <div class="ts" style="width:55%;background:rgba(184,166,255,.2);color:var(--purple)">system + tool defs ~700</div>
+        <div class="ts" style="width:26%;background:rgba(245,166,35,.15);color:var(--amber)">user question ~300</div>
+        <div class="ts" style="width:19%;background:rgba(26,38,48,.8);color:var(--dim)">padding ~219</div>
+      </div>
+      <div class="tsub">output: 18 tokens (just the tool call JSON)</div>
+    </div>
+    <div class="tbw">
+      <div class="tbl">LLM Call #2 &mdash; 1,537 input tokens (+318 from BigQuery result)</div>
+      <div class="tb">
+        <div class="ts" style="width:45%;background:rgba(184,166,255,.2);color:var(--purple)">system + tools ~700</div>
+        <div class="ts" style="width:20%;background:rgba(245,166,35,.15);color:var(--amber)">question ~300</div>
+        <div class="ts" style="width:21%;background:rgba(57,255,110,.15);color:var(--green)">BQ result +318</div>
+        <div class="ts" style="width:14%;background:rgba(26,38,48,.8);color:var(--dim)">other</div>
+      </div>
+      <div class="tsub">output: 69 tokens (tool call for get_demo_airport)</div>
+    </div>
+    <div class="tbw">
+      <div class="tbl">LLM Call #3 &mdash; 1,765 input tokens (+228 from 2nd BQ result)</div>
+      <div class="tb">
+        <div class="ts" style="width:39%;background:rgba(184,166,255,.2);color:var(--purple)">system + tools</div>
+        <div class="ts" style="width:17%;background:rgba(245,166,35,.15);color:var(--amber)">question</div>
+        <div class="ts" style="width:18%;background:rgba(57,255,110,.15);color:var(--green)">BQ result 1</div>
+        <div class="ts" style="width:13%;background:rgba(0,212,255,.15);color:var(--cyan)">BQ result 2</div>
+        <div class="ts" style="width:13%;background:rgba(26,38,48,.8);color:var(--dim)">other</div>
+      </div>
+      <div class="tsub">output: 170 tokens (partial text + tool call for flight counts)</div>
+    </div>
+    <div class="tbw">
+      <div class="tbl">LLM Call #4 &mdash; 1,960 input tokens (+195 from AeroAPI counts result)</div>
+      <div class="tb">
+        <div class="ts" style="width:36%;background:rgba(184,166,255,.2);color:var(--purple)">system + tools</div>
+        <div class="ts" style="width:15%;background:rgba(245,166,35,.15);color:var(--amber)">question</div>
+        <div class="ts" style="width:16%;background:rgba(57,255,110,.15);color:var(--green)">BQ 1</div>
+        <div class="ts" style="width:12%;background:rgba(0,212,255,.15);color:var(--cyan)">BQ 2</div>
+        <div class="ts" style="width:11%;background:rgba(245,166,35,.25);color:var(--amber)">API +195</div>
+        <div class="ts" style="width:10%;background:rgba(26,38,48,.8);color:var(--dim)">other</div>
+      </div>
+      <div class="tsub">output: 152 tokens (final text answer) &mdash; <strong style="color:var(--green)">loop exits</strong></div>
+    </div>
+    <div class="ins"><strong>Key insight:</strong> The context window grew from 1,219 to 1,960 tokens across Turn 1 as each tool result was appended. The system prompt + tool definitions take up ~700 tokens regardless &mdash; they&rsquo;re re-sent on every LLM call.</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="pb2 bn"><span class="bnum">08c</span> Context window limits &mdash; qwen2.5:3b vs other models</div>
+  <div class="pb">
+<pre>MODEL                    CONTEXT WINDOW     ROUGHLY EQUIVALENT TO
+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;
+<span class="p">qwen2.5:3b</span> (yours)      <span class="a">32,768 tokens</span>      ~25,000 words / ~50 pages
+<span class="p">Llama3.2:9b</span>             <span class="a">128,000 tokens</span>     ~96,000 words / ~200 pages
+<span class="p">Claude Sonnet 4</span>         <span class="a">200,000 tokens</span>     ~150,000 words / ~300 pages
+
+<span class="d">Turn 1 used 2,112 tokens &mdash; only 6.4% of qwen2.5:3b's 32K limit.
+Turn 2 accumulated to ~2,813 tokens.
+With memory_enabled=False (your setting), each new agent.run() starts fresh.</span></pre>
+  </div>
+</div>
+
+<!-- ===== MAX STEPS ===== -->
+<h2 id="maxsteps">max_steps &mdash; The Safety Brake</h2>
+
+<div class="card">
+  <div class="pb2 bn"><span class="bnum">09a</span> What is one "step"?</div>
+  <div class="pb">
+    <p style="font-size:.85rem;line-height:1.75;color:var(--text);margin-bottom:.75rem">One step = one model call. <code>ModelCallLimitMiddleware</code> increments a counter before and after every LLM call. When the counter hits <code>max_steps</code>, a <code>StopIteration</code> is raised and the loop is forced to exit &mdash; whether or not the LLM is finished.</p>
+<pre>Your aero-ref used <span class="a">max_steps=24</span> (seen in log: "Created agent with max_steps=24")
+Turn 1 used: <span class="g">4 model calls</span> of 24 &mdash; well within the limit.
+
+Step 1: LLM Call #1 &rarr; list_demo_airports tool  &rarr; result
+Step 2: LLM Call #2 &rarr; get_demo_airport tool    &rarr; result
+Step 3: LLM Call #3 &rarr; get_airport_flight_counts &rarr; result
+Step 4: LLM Call #4 &rarr; final answer, tool_calls=<span class="g">[]</span> &rarr; <span class="g">DONE</span></pre>
+  </div>
+</div>
+
+<div class="card">
+  <div class="pb2 bw2"><span class="bnum">09b</span> What causes an agent to hit max_steps</div>
+  <div class="pb">
+<pre><span class="r">1. Tool keeps failing &rarr; LLM keeps retrying</span>
+   get_airport_flight_counts &rarr; API timeout &rarr; retry &rarr; timeout &rarr; retry...
+
+<span class="r">2. LLM gets confused in a loop</span>
+   calls list_demo_airports &rarr; gets result &rarr; calls list_demo_airports again!
+   You saw a mild version of this: LLM called get_demo_airport
+   after list_demo_airports had already returned the same data.
+
+<span class="r">3. Task genuinely needs more steps than you allowed</span>
+   PA agent processing 5 requests with max_steps=10
+   &rarr; runs out before finishing all requests
+
+<span class="r">4. LLM over-plans, breaks simple tasks into too many tool calls</span>
+   3b models are especially prone to this with complex multi-part questions</pre>
+    <div class="wrn"><strong>Recommendation for your PA agent:</strong> Set <code>max_steps=15</code>. A full PA workflow (eligibility check + guidelines lookup + PA DB update + notification) needs ~7&ndash;9 steps. 15 gives headroom without letting a stuck agent burn tokens forever.</div>
+  </div>
+</div>
+
+<!-- ===== TURN 2 ===== -->
+<h2 id="second-turn">Turn 2 &mdash; KHOU not in catalog, agent goes off-rails</h2>
+
+<div class="card">
+  <div class="pb2 bw2"><span class="bnum">10</span> What happened when KHOU was requested</div>
+  <div class="pb">
+    <div class="ll">Turn 2 query:</div>
+<pre>Human: <span class="a">"Compare Houston Hobby (KHOU) and Bush (KIAH): official names and cities
+        from our catalog, then contrast live flight counts..."</span></pre>
+    <div class="ll">What happened:</div>
+<pre>Step 1: <span class="c">get_demo_airport(airport_code="KHOU")</span>
+Result: <span class="r">{"count": 0, "rows": []}</span>   &larr; KHOU not in BigQuery demo table
+
+LLM response:
+  <span class="r">"It appears there is no entry in the demo airport catalog for 'KHOU'.
+   Let's proceed with fetching information for 'KIAH' and compare it to
+   a real airport code, such as 'DFW' (Dallas/Fort Worth)..."</span>
+
+Step 2: <span class="c">get_demo_airport(airport_code="KIAH")</span>   &larr; fetched AGAIN (already in context!)
+Result: KIAH data (identical to Turn 1)
+
+Step 3: LLM writes partial answer about KIAH and DFW, tool_calls=<span class="r">[]</span>
+        &larr; NEVER fetched KHOU live data, NEVER fetched DFW data,
+           just made up a comparison without any evidence.</pre>
+    <div class="wrn">
+      <strong>Three problems in one turn:</strong>
+      <br/>1. <strong>Catalog gap</strong> &mdash; KHOU is not in the BigQuery demo table. Real fix: add it to <code>flight_booking_demo.user_travel</code>.
+      <br/>2. <strong>Context blindness</strong> &mdash; LLM re-fetched KIAH data it already had.
+      <br/>3. <strong>Hallucinated pivot</strong> &mdash; LLM invented a DFW comparison the user never asked for, without any data.
+    </div>
+    <div class="ins"><strong>Root cause:</strong> A 3b model lacks the reasoning capacity to handle &ldquo;one entity missing from catalog, gracefully degrade to live-only data for what I have&rdquo;. Upgrading to <code>qwen2.5:9b</code> or <code>llama3.2:9b</code> would improve this significantly. Better catalog coverage is the other fix.</div>
+  </div>
+</div>
+
+<!-- ===== SUMMARY ===== -->
+<h2 id="stack">Component Summary</h2>
+
+<div class="card">
+  <div class="pb2 bn"><span class="bnum">11</span> Every piece and what it did in this run</div>
+  <div class="pb">
+    <table>
+      <thead><tr><th>Component</th><th>Role</th><th>What it did in this run</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>MCPClient.from_dict()</td>
+          <td>Config reader + session manager</td>
+          <td>Read mcp_config.json, spawned 2 server subprocesses via stdio, ran MCP handshake on each</td>
+        </tr>
+        <tr>
+          <td>flight_server.py (FastMCP)</td>
+          <td>Flight MCP server</td>
+          <td>Exposed 4 tools wrapping AeroAPI endpoints. Handled 1 real HTTP call to FlightAware (&rarr; 1.8s)</td>
+        </tr>
+        <tr>
+          <td>bigquery_server.py (FastMCP)</td>
+          <td>Catalog MCP server</td>
+          <td>Exposed 2 tools querying BigQuery aero_reference.airports. Handled 3 SQL queries across both turns</td>
+        </tr>
+        <tr>
+          <td>mcp-use MCPAgent</td>
+          <td>MCP-to-LangChain bridge + loop</td>
+          <td>Auto-wrapped 6 MCP tool schemas as LangChain StructuredTools; executed all tool calls via stdio; enforced max_steps=24</td>
+        </tr>
+        <tr>
+          <td>LangGraph (inside mcp-use)</td>
+          <td>Orchestration loop + routing</td>
+          <td>Ran model&rarr;tools&rarr;model loop with conditional edges. Exited when tool_calls=[]. Ran ModelCallLimitMiddleware between every node.</td>
+        </tr>
+        <tr>
+          <td>ChatOllama (langchain-ollama)</td>
+          <td>LLM bridge</td>
+          <td>Translated LangChain message format to Ollama REST API at localhost:11434; streamed back AIMessages</td>
+        </tr>
+        <tr>
+          <td>qwen2.5:3b (Ollama)</td>
+          <td>LLM / reasoning engine</td>
+          <td>Made 4 LLM calls in Turn 1. Read tool schemas from system prompt, chose tools by text matching, wrote final summary. Showed 3b limitations: redundant tool calls, hallucinated delay conclusion, off-rails pivot in Turn 2.</td>
+        </tr>
+        <tr>
+          <td>BigQuery (GCP)</td>
+          <td>Airport reference catalog</td>
+          <td>Returned 2-row demo dataset (KIAH + KSFO). KHOU lookup returned 0 rows &mdash; catalog gap exposed in Turn 2.</td>
+        </tr>
+        <tr>
+          <td>AeroAPI (FlightAware)</td>
+          <td>Live flight data</td>
+          <td>Returned real-time counts for KIAH: 91 departed, 254 enroute, 1521 scheduled arrivals, 1547 scheduled departures.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="s3">
+  <div class="sc">
+    <div class="sct" style="color:var(--purple)">LangChain</div>
+    <div class="scd">The common language. HumanMessage, ToolMessage, StructuredTool, ChatOllama &mdash; all LangChain types. Provides the message format contract every component speaks.</div>
+  </div>
+  <div class="sc">
+    <div class="sct" style="color:var(--amber)">LangGraph</div>
+    <div class="scd">The loop engine. model node &rarr; tools node &rarr; model node, with state graph, conditional edges, and step counting via middleware. Built on top of LangChain.</div>
+  </div>
+  <div class="sc">
+    <div class="sct" style="color:var(--cyan)">mcp-use</div>
+    <div class="scd">The bridge. Converts MCP tool schemas to LangChain StructuredTools automatically, routes tool calls to the correct subprocess over stdio, returns ToolMessages to the graph state.</div>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<footer>
+  <div class="fl">GEORGEJINU-LABS &middot; AERO-REF</div>
+  <div class="fr">Built with FastMCP &middot; LangGraph &middot; Ollama &middot; qwen2.5:3b</div>
+</footer>
+
+</body>
+</html>
