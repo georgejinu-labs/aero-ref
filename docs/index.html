@@ -10,92 +10,92 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --bg:#080c10;--panel:#0d1318;--panel2:#0a1018;--border:#1a2630;--border2:#223040;
-      --amber:#f5a623;--adim:#7a5212;--abg:rgba(245,166,35,.07);
-      --cyan:#00d4ff;--cdim:#004f5e;--cbg:rgba(0,212,255,.07);
-      --green:#39ff6e;--gdim:#0f4020;--gbg:rgba(57,255,110,.07);
-      --purple:#b8a6ff;--pdim:#3a2870;--pbg:rgba(184,166,255,.07);
-      --red:#ff3c5a;--rdim:#5a0f1a;--rbg:rgba(255,60,90,.07);
-      --text:#c8d8e4;--dim:#7a9cb0;--mid:#b0c8d4;--white:#eef4f8;
+      --bg:#ffffff;--panel:#f8fafc;--panel2:#f1f5f9;--border:#e2e8f0;--border2:#cbd5e1;
+      --amber:#b45309;--adim:#d97706;--abg:rgba(217,119,6,.1);
+      --cyan:#0e7490;--cdim:#0891b2;--cbg:rgba(8,145,178,.1);
+      --green:#047857;--gdim:#059669;--gbg:rgba(5,150,105,.1);
+      --purple:#5b21b6;--pdim:#7c3aed;--pbg:rgba(124,58,237,.1);
+      --red:#be123c;--rdim:#e11d48;--rbg:rgba(225,29,72,.08);
+      --text:#1e293b;--dim:#475569;--mid:#334155;--heading:#0f172a;--link:#0369a1;
     }
     html{scroll-behavior:smooth}
-    body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
-    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.035;
+    body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.02;
       background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
     body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-      background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,.012) 2px,rgba(0,212,255,.012) 4px)}
+      background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(15,23,42,.02) 2px,rgba(15,23,42,.02) 4px)}
     nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
-      padding:1rem 2.5rem;border-bottom:1px solid var(--border);background:rgba(8,12,16,.96);backdrop-filter:blur(12px)}
+      padding:1rem 2.5rem;border-bottom:1px solid var(--border);background:rgba(255,255,255,.92);backdrop-filter:blur(12px)}
     .nl{font-family:'Share Tech Mono',monospace;font-size:.88rem;color:var(--amber);letter-spacing:.12em;display:flex;align-items:center;gap:.6rem}
     .np{width:7px;height:7px;border-radius:50%;background:var(--amber);animation:pulse 2s ease-in-out infinite}
-    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.6)}}
     .nlinks{display:flex;gap:1.75rem}
     .nlinks a{font-size:.76rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-decoration:none;transition:color .2s}
-    .nlinks a:hover{color:var(--cyan)}
-    .ngh{font-family:'Share Tech Mono',monospace;font-size:.75rem;color:var(--amber);border:1px solid var(--adim);padding:.4rem .9rem;text-decoration:none;transition:all .2s}
-    .ngh:hover{background:var(--amber);color:var(--bg)}
+    .nlinks a:hover{color:var(--link)}
+    .ngh{font-family:'Share Tech Mono',monospace;font-size:.75rem;color:var(--amber);border:1px solid var(--adim);padding:.4rem .9rem;text-decoration:none;transition:all .2s;border-radius:2px}
+    .ngh:hover{background:var(--amber);color:#fff}
     .page{max-width:900px;margin:0 auto;padding:3rem 2rem 5rem;position:relative;z-index:1}
     .hero{margin-bottom:2.5rem;padding-bottom:2.5rem;border-bottom:1px solid var(--border)}
     .ey{font-family:'Share Tech Mono',monospace;font-size:.76rem;color:var(--cyan);letter-spacing:.2em;text-transform:uppercase;display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
     .ey::before{content:'';width:24px;height:1px;background:var(--cyan)}
-    h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.2rem,5vw,3.5rem);font-weight:900;text-transform:uppercase;letter-spacing:-.02em;color:var(--white);line-height:1;margin-bottom:.75rem}
+    h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.2rem,5vw,3.5rem);font-weight:900;text-transform:uppercase;letter-spacing:-.02em;color:var(--heading);line-height:1;margin-bottom:.75rem}
     h1 .acc{color:var(--amber)}
-    .hs{color:var(--mid);font-size:.9rem;max-width:620px;line-height:1.7;margin-bottom:1.25rem}
+    .hs{color:var(--mid);font-size:.95rem;max-width:640px;line-height:1.75;margin-bottom:1.25rem}
     .hk{display:flex;flex-wrap:wrap;gap:.5rem}
-    .pill{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.08em;padding:.25rem .65rem;border:1px solid}
+    .pill{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.08em;padding:.25rem .65rem;border:1px solid;border-radius:2px;background:#fff}
     .pa{border-color:var(--adim);color:var(--amber)}.pc{border-color:var(--cdim);color:var(--cyan)}.pg{border-color:var(--gdim);color:var(--green)}.pp{border-color:var(--pdim);color:var(--purple)}
-    .toc{background:var(--panel);border:1px solid var(--border);padding:1.25rem 1.5rem;margin-bottom:2.5rem}
+    .toc{background:var(--panel);border:1px solid var(--border);padding:1.25rem 1.5rem;margin-bottom:2.5rem;border-radius:8px}
     .toc-t{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:.85rem}
-    .toc a{font-size:.82rem;color:var(--cyan);text-decoration:none;display:block;padding:.2rem 0;transition:color .15s}
-    .toc a:hover{color:var(--white)}.toc a span{color:var(--amber);margin-right:.5rem;font-family:'Share Tech Mono',monospace;font-size:.75rem}
-    h2{font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:900;text-transform:uppercase;color:var(--white);letter-spacing:-.01em;margin:2.5rem 0 1.25rem}
-    .card{border:1px solid var(--border);background:var(--panel);margin-bottom:1.25rem;overflow:hidden}
+    .toc a{font-size:.82rem;color:var(--link);text-decoration:none;display:block;padding:.2rem 0;transition:color .15s}
+    .toc a:hover{color:var(--heading)}.toc a span{color:var(--amber);margin-right:.5rem;font-family:'Share Tech Mono',monospace;font-size:.75rem}
+    h2{font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:900;text-transform:uppercase;color:var(--heading);letter-spacing:-.01em;margin:2.5rem 0 1.25rem}
+    .card{border:1px solid var(--border);background:#fff;margin-bottom:1.25rem;overflow:hidden;border-radius:8px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
     .pb2{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;font-family:'Share Tech Mono',monospace;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border)}
-    .bnum{font-size:.68rem;padding:.2rem .5rem;border:1px solid currentColor;opacity:.7}
-    .bs{background:rgba(0,212,255,.08);color:var(--cyan);border-bottom-color:var(--cdim)}
-    .bd2{background:rgba(57,255,110,.08);color:var(--green);border-bottom-color:var(--gdim)}
-    .bl{background:rgba(184,166,255,.08);color:var(--purple);border-bottom-color:var(--pdim)}
-    .bt{background:rgba(245,166,35,.08);color:var(--amber);border-bottom-color:var(--adim)}
-    .blo{background:rgba(200,216,228,.05);color:var(--text);border-bottom-color:var(--border2)}
-    .bw2{background:rgba(255,60,90,.08);color:var(--red);border-bottom-color:var(--rdim)}
-    .bn{background:rgba(26,38,48,.6);color:var(--mid);border-bottom-color:var(--border)}
+    .bnum{font-size:.68rem;padding:.2rem .5rem;border:1px solid currentColor;opacity:.85;border-radius:2px}
+    .bs{background:var(--cbg);color:var(--cyan);border-bottom-color:var(--cdim)}
+    .bd2{background:var(--gbg);color:var(--green);border-bottom-color:var(--gdim)}
+    .bl{background:var(--pbg);color:var(--purple);border-bottom-color:var(--pdim)}
+    .bt{background:var(--abg);color:var(--amber);border-bottom-color:var(--adim)}
+    .blo{background:var(--panel2);color:var(--text);border-bottom-color:var(--border2)}
+    .bw2{background:var(--rbg);color:var(--red);border-bottom-color:var(--rdim)}
+    .bn{background:var(--panel);color:var(--mid);border-bottom-color:var(--border)}
     .pb{padding:1.25rem}
     .ll{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:.6rem;margin-top:.9rem}
     .ll:first-child{margin-top:0}
-    pre{background:#040609;border:1px solid var(--border);padding:1.1rem 1.4rem;font-family:'Share Tech Mono',monospace;font-size:.8rem;line-height:2.1;color:var(--text);overflow-x:auto;white-space:pre;margin:.6rem 0}
-    code{font-family:'Share Tech Mono',monospace;font-size:.8rem;background:rgba(0,212,255,.08);color:var(--cyan);padding:.1rem .4rem}
-    .c{color:#00d4ff;font-weight:600}.a{color:#f5a623;font-weight:600}.g{color:#39ff6e;font-weight:600}.p{color:#b8a6ff;font-weight:600}.r{color:#ff3c5a;font-weight:600}.d{color:#8fb8c8}.w{color:#eef4f8;font-weight:600}
-    .mx{background:var(--panel2);border-left:2px solid var(--purple);padding:1rem 1.25rem;margin:.75rem 0;font-size:.85rem;line-height:1.75;color:var(--text)}
+    pre{background:var(--panel2);border:1px solid var(--border);padding:1.1rem 1.4rem;font-family:'Share Tech Mono',monospace;font-size:.8rem;line-height:2.1;color:var(--heading);overflow-x:auto;white-space:pre;margin:.6rem 0;border-radius:6px}
+    code{font-family:'Share Tech Mono',monospace;font-size:.8rem;background:var(--cbg);color:var(--cyan);padding:.12rem .45rem;border-radius:4px}
+    .c{color:#0e7490;font-weight:600}.a{color:#b45309;font-weight:600}.g{color:#047857;font-weight:600}.p{color:#5b21b6;font-weight:600}.r{color:#be123c;font-weight:600}.d{color:#64748b}.w{color:#0f172a;font-weight:600}
+    .mx{background:var(--panel);border-left:3px solid var(--purple);padding:1rem 1.25rem;margin:.75rem 0;font-size:.88rem;line-height:1.75;color:var(--text);border-radius:0 6px 6px 0}
     .mxl{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:.5rem}
     .mx p{margin-bottom:.4rem}.mx p:last-child{margin-bottom:0}
-    .ins{background:var(--gbg);border:1px solid var(--gdim);padding:.85rem 1.1rem;font-size:.85rem;line-height:1.7;color:var(--text);margin:.75rem 0}
+    .ins{background:var(--gbg);border:1px solid var(--gdim);padding:.85rem 1.1rem;font-size:.88rem;line-height:1.7;color:var(--text);margin:.75rem 0;border-radius:6px}
     .ins strong{color:var(--green)}
-    .wrn{background:var(--rbg);border:1px solid var(--rdim);padding:.85rem 1.1rem;font-size:.85rem;line-height:1.7;color:var(--text);margin:.75rem 0}
+    .wrn{background:var(--rbg);border:1px solid var(--rdim);padding:.85rem 1.1rem;font-size:.88rem;line-height:1.7;color:var(--text);margin:.75rem 0;border-radius:6px}
     .wrn strong{color:var(--red)}
-    .amb{background:var(--abg);border:1px solid var(--adim);padding:.85rem 1.1rem;font-size:.85rem;line-height:1.7;color:var(--text);margin:.75rem 0}
+    .amb{background:var(--abg);border:1px solid var(--adim);padding:.85rem 1.1rem;font-size:.88rem;line-height:1.7;color:var(--text);margin:.75rem 0;border-radius:6px}
     .amb strong{color:var(--amber)}
-    table{width:100%;border-collapse:collapse;font-size:.82rem;margin:.75rem 0}
-    th{background:#0a1018;color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;padding:.65rem 1rem;text-align:left;border-bottom:1px solid var(--border)}
-    td{padding:.7rem 1rem;border-bottom:1px solid #0f1820;color:var(--text);vertical-align:top}
+    table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.75rem 0}
+    th{background:var(--panel2);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;padding:.65rem 1rem;text-align:left;border-bottom:1px solid var(--border)}
+    td{padding:.7rem 1rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top}
     tr:last-child td{border-bottom:none}
     td:first-child{font-family:'Share Tech Mono',monospace;color:var(--cyan);font-size:.8rem}
     .tc{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
-    .cb{background:#040609;border:1px solid var(--border);padding:1rem}
-    .cbt{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem}
+    .cb{background:var(--panel2);border:1px solid var(--border);padding:1rem;border-radius:6px}
+    .cbt{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem;color:var(--dim)}
     .bad{color:var(--red)}.good2{color:var(--green)}
     .tbw{margin:.6rem 0}
     .tbl{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--dim);letter-spacing:.1em;margin-bottom:.3rem}
-    .tb{height:26px;display:flex;border:1px solid var(--border);overflow:hidden;background:#040609}
+    .tb{height:26px;display:flex;border:1px solid var(--border);overflow:hidden;background:var(--panel2);border-radius:4px}
     .ts{display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:.66rem;font-weight:700;overflow:hidden;white-space:nowrap}
     .tsub{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--dim);margin-top:.25rem}
-    .s3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin:.75rem 0}
-    .sc{background:var(--panel);padding:1.25rem}
+    .s3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin:.75rem 0;border-radius:8px;overflow:hidden}
+    .sc{background:#fff;padding:1.25rem}
     .sct{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;text-transform:uppercase;margin-bottom:.5rem}
-    .scd{font-size:.85rem;color:var(--dim);line-height:1.6}
+    .scd{font-size:.88rem;color:var(--dim);line-height:1.65}
     hr{border:none;border-top:1px solid var(--border);margin:2rem 0}
-    .ban{background:var(--panel);border:1px solid var(--border);padding:.75rem 1.25rem;margin-bottom:2rem;font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--dim);line-height:1.7}
-    .ban a{color:var(--cyan);text-decoration:none}.ban a:hover{color:var(--white)}
-    footer{border-top:1px solid var(--border);margin-top:4rem;padding:1.75rem 2.5rem;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+    .ban{background:var(--panel);border:1px solid var(--border);padding:.75rem 1.25rem;margin-bottom:2rem;font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--dim);line-height:1.7;border-radius:8px}
+    .ban a{color:var(--link);text-decoration:none;font-weight:600}.ban a:hover{color:var(--heading);text-decoration:underline}
+    footer{border-top:1px solid var(--border);margin-top:4rem;padding:1.75rem 2.5rem;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;background:var(--bg)}
     .fl{font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--amber)}
     .fr{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--dim)}
     @media(max-width:680px){nav{padding:.85rem 1.25rem}.nlinks{display:none}.page{padding:2rem 1.25rem 4rem}.tc,.s3{grid-template-columns:1fr}footer{flex-direction:column;gap:.75rem;text-align:center}}
@@ -431,7 +431,7 @@ Rule of thumb:
       <div class="tb">
         <div class="ts" style="width:55%;background:rgba(184,166,255,.2);color:var(--purple)">system + tool defs ~700</div>
         <div class="ts" style="width:26%;background:rgba(245,166,35,.15);color:var(--amber)">user question ~300</div>
-        <div class="ts" style="width:19%;background:rgba(26,38,48,.8);color:var(--dim)">padding ~219</div>
+        <div class="ts" style="width:19%;background:#e2e8f0;color:#334155">padding ~219</div>
       </div>
       <div class="tsub">output: 18 tokens (just the tool call JSON)</div>
     </div>
@@ -441,7 +441,7 @@ Rule of thumb:
         <div class="ts" style="width:45%;background:rgba(184,166,255,.2);color:var(--purple)">system + tools ~700</div>
         <div class="ts" style="width:20%;background:rgba(245,166,35,.15);color:var(--amber)">question ~300</div>
         <div class="ts" style="width:21%;background:rgba(57,255,110,.15);color:var(--green)">BQ result +318</div>
-        <div class="ts" style="width:14%;background:rgba(26,38,48,.8);color:var(--dim)">other</div>
+        <div class="ts" style="width:14%;background:#e2e8f0;color:#334155">other</div>
       </div>
       <div class="tsub">output: 69 tokens (tool call for get_demo_airport)</div>
     </div>
@@ -452,7 +452,7 @@ Rule of thumb:
         <div class="ts" style="width:17%;background:rgba(245,166,35,.15);color:var(--amber)">question</div>
         <div class="ts" style="width:18%;background:rgba(57,255,110,.15);color:var(--green)">BQ result 1</div>
         <div class="ts" style="width:13%;background:rgba(0,212,255,.15);color:var(--cyan)">BQ result 2</div>
-        <div class="ts" style="width:13%;background:rgba(26,38,48,.8);color:var(--dim)">other</div>
+        <div class="ts" style="width:13%;background:#e2e8f0;color:#334155">other</div>
       </div>
       <div class="tsub">output: 170 tokens (partial text + tool call for flight counts)</div>
     </div>
@@ -464,7 +464,7 @@ Rule of thumb:
         <div class="ts" style="width:16%;background:rgba(57,255,110,.15);color:var(--green)">BQ 1</div>
         <div class="ts" style="width:12%;background:rgba(0,212,255,.15);color:var(--cyan)">BQ 2</div>
         <div class="ts" style="width:11%;background:rgba(245,166,35,.25);color:var(--amber)">API +195</div>
-        <div class="ts" style="width:10%;background:rgba(26,38,48,.8);color:var(--dim)">other</div>
+        <div class="ts" style="width:10%;background:#e2e8f0;color:#334155">other</div>
       </div>
       <div class="tsub">output: 152 tokens (final text answer) &mdash; <strong style="color:var(--green)">loop exits</strong></div>
     </div>
