@@ -6,12 +6,13 @@ The Python package name is `aero-ref` (distribution); import path is `aero_ref`.
 
 ---
 
-## Long-form visual reference (`docs/index.html`)
+## Long-form visual reference
 
-[`docs/index.html`](docs/index.html) is a **styled HTML walkthrough** of how an MCP stdio client, **mcp-use**’s `MCPClient` / `MCPAgent`, and **LangGraph** fit together: phased startup, `initialize` / `tools/list`, the model ↔ tools loop, memory, and context growth. It uses an older **weather MCP** example in the prose and snippets; the **mechanics are the same** here—substitute two servers (`flight`, `bigquery`) and the six tools below.
+**Rendered HTML** (diagrams, styling): the long-form doc is published at **[https://georgejinu-labs.github.io/aero-ref/](https://georgejinu-labs.github.io/aero-ref/)** — built from [`docs/index.html`](docs/index.html). On GitHub’s file browser, `docs/index.html` opens as raw source; use the Pages URL above for a normal web page.
 
-- **Offline:** open `docs/index.html` in a browser from a local clone.
-- **Publishing:** point GitHub Pages (or any static host) at `/docs` if you want the HTML live; update the `<link rel="canonical">` and titles inside the file when the public URL is final.
+That page walks through a real **aero-ref** run: two MCP servers, six tools, LangGraph phases, token growth, `max_steps`, and the second-turn catalog edge case—aligned with [`execution.log`](execution.log).
+
+- **Offline:** open [`docs/index.html`](docs/index.html) from a local clone in your browser (file path or drag into a window).
 
 ---
 
