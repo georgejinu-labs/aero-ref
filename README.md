@@ -10,7 +10,7 @@ The Python package name is `aero-ref` (distribution); import path is `aero_ref`.
 
 **Rendered HTML** (diagrams, styling): the long-form doc is published at **[https://georgejinu-labs.github.io/aero-ref/](https://georgejinu-labs.github.io/aero-ref/)** — built from [`docs/index.html`](docs/index.html). On GitHub’s file browser, `docs/index.html` opens as raw source; use the Pages URL above for a normal web page.
 
-That page walks through a real **aero-ref** run: two MCP servers, six tools, LangGraph phases, token growth, `max_steps`, and the second-turn catalog edge case—aligned with [`execution.log`](execution.log).
+That page walks through a real **aero-ref** run: two MCP servers, LangGraph phases, token growth, `max_steps`, and the second-turn catalog edge case—aligned in spirit with [`execution.log`](execution.log) (tool counts may differ as the demo evolves).
 
 - **Offline:** open [`docs/index.html`](docs/index.html) from a local clone in your browser (file path or drag into a window).
 
@@ -28,18 +28,28 @@ with trace logging enabled (see [Run](#run)). It shows the same pipeline you wou
 
 1. **Two stdio MCP sessions** — `mcp_use` spawns `uv run --directory <repo> src/aero_ref/flight_server.py` and `.../bigquery_server.py`.
 2. **Cold `initialize` latency** — in this log, flight ~17s and BigQuery ~21s (first import + deps + optional BigQuery warmup; your machine will differ).
-3. **Tool discovery** — flight MCP exposes four tools; BigQuery MCP exposes two (**six LangChain tools** total):
+3. **Tool discovery** — flight MCP exposes four tools; BigQuery MCP exposes two catalog tools, a **tiny** no-arg hint tool (`get_demo_airport_hints`), an MCP **resource** (`reference://demo-airport-hints`, same text), and **MCP prompts** (`airport-summary`, `compare-airports`) used by `main.py` when `AGENT_USE_MCP_PROMPTS=1` (default).
 
    | Server    | Tools |
    | --------- | ----- |
    | `flight`  | `get_airport_flights`, `get_airport_arrivals`, `get_airport_departures`, `get_airport_flight_counts` |
-   | `bigquery`| `list_demo_airports`, `get_demo_airport` |
+   | `bigquery`| `list_demo_airports`, `get_demo_airport`, `get_demo_airport_hints` |
 
 4. **LangGraph** — `ModelCallLimitMiddleware` then **model** (ChatOllama → Ollama, e.g. `qwen2.5:3b`), then **tools** node issuing MCP `tools/call` JSON-RPC over stdin/stdout.
 5. **Example dialogue** — first turn: catalog lookup for **KIAH** plus `get_airport_flight_counts`; second turn: compare airports (limited by which ICAO codes exist in your BigQuery `airports` table—the log illustrates a missing catalog row and model recovery).
 6. **Shutdown** — sessions closed cleanly after `agent.run` completes.
 
 Use that file when you want **line-level** correlation with LangChain `[chain/*]`, `[llm/*]`, and mcp-use DEBUG lines.
+
+---
+
+## MCP prompts (workflow templates on the server)
+
+An **MCP prompt** is a **pre-built workflow template** registered on the MCP server (here: [`src/aero_ref/bigquery_server.py`](src/aero_ref/bigquery_server.py)), not a long instruction string baked into [`main.py`](main.py). The client calls `prompts/get` with a name and arguments; the returned text becomes the **user message** passed to `agent.run(...)`.
+
+**Why that matters:** edge-case rules (for example, “if the catalog has no row for KHOU, say so and **do not** substitute DFW or another hub”) live **with the server**, so every run gets the same guardrails without duplicating paragraphs in the driver. The same hint text is available as MCP **`reference://demo-airport-hints`** and as **`get_demo_airport_hints()`** (no arguments). Prefer the **tool** in LangGraph runs: mcp-use maps resource reads to LangChain tools that require a valid `uri`, and small models often pass invalid placeholders. Authoritative rows still come from `get_demo_airport`.
+
+**Defaults in `main.py`:** with `AGENT_USE_MCP_PROMPTS=1` (default), turn 1 uses prompt `airport-summary` (`AGENT_PROMPT_ICAO`, default `KIAH`); turn 2 uses `compare-airports` (`SECOND_PROMPT_ICAO_A` / `SECOND_PROMPT_ICAO_B`, default `KHOU` / `KIAH`). Set `AGENT_USE_MCP_PROMPTS=0` to use plain `AGENT_QUERY` and `SECOND_AGENT_QUERY` strings instead.
 
 ---
 
@@ -89,8 +99,8 @@ uv run python main.py
 
 Optional queries (defaults are in `main.py`):
 
-- `AGENT_QUERY` — first user message
-- `SECOND_AGENT_QUERY` — second turn (conversation memory on)
+- **`AGENT_USE_MCP_PROMPTS=1`** (default) — first/second messages from BigQuery MCP prompts; tune with `AGENT_PROMPT_FIRST`, `AGENT_PROMPT_ICAO`, `SECOND_AGENT_PROMPT`, `SECOND_PROMPT_ICAO_A`, `SECOND_PROMPT_ICAO_B`.
+- **`AGENT_USE_MCP_PROMPTS=0`** — use string queries instead: `AGENT_QUERY`, `SECOND_AGENT_QUERY`
 
 **Verbose trace** (similar style to `execution.log`):
 

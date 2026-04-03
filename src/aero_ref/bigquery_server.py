@@ -107,10 +107,62 @@ mcp = FastMCP(
     name="aero-ref-bigquery",
     version="1.0.0",
     instructions="Read-only BigQuery: demo airports catalog — list_demo_airports, get_demo_airport. "
+    "Static reference: MCP resource reference://demo-airport-hints; same text as tool get_demo_airport_hints (no args). "
+    "Workflow templates: MCP prompts airport-summary, compare-airports. "
     "Live flight boards: flight MCP get_airport_flights, get_airport_arrivals, "
     "get_airport_departures, get_airport_flight_counts (AeroAPI).",
     lifespan=_warmup_bigquery_lifespan,
 )
+
+
+def _demo_airport_hints_text() -> str:
+    return (
+        "Demo table often includes KIAH (George Bush Intercontinental, Houston) and KSFO "
+        "(San Francisco Intl). KHOU (Hobby) may be absent—if the catalog has no row, say so; "
+        "do not substitute another airport (e.g. not DFW)."
+    )
+
+
+@mcp.resource(
+    "reference://demo-airport-hints",
+    description="Tiny static ICAO/name hints for demos; same payload as get_demo_airport_hints (for MCP clients that read resources by URI).",
+)
+def demo_airport_hints_resource() -> str:
+    return _demo_airport_hints_text()
+
+
+@mcp.tool()
+def get_demo_airport_hints() -> str:
+    """
+    ~200 chars of static ICAO/name hints for demos (not the catalog).
+    Call with no arguments. For real rows use get_demo_airport.
+    """
+    return _demo_airport_hints_text()
+
+
+@mcp.prompt("airport-summary")
+def airport_summary(icao_code: str) -> str:
+    """Expandable template: one airport, catalog + live counts, no hallucinated substitutes."""
+    code = (icao_code or "").strip().upper() or "KIAH"
+    return f"""For airport {code}:
+1. Optionally read MCP resource reference://demo-airport-hints or call get_demo_airport_hints() (same text; tool has no args; not the catalog).
+2. On the bigquery server, call get_demo_airport(airport_code="{code}").
+3. If there are zero rows, say the code is missing from the catalog—do not invent or swap in another airport.
+4. On the flight server, call get_airport_flight_counts(airport_id="{code}"); use arrivals/departures tools only if the user needs delay or sample detail (small max_pages).
+5. Report catalog facts vs live API facts separately; keep tool output concise in the final answer."""
+
+
+@mcp.prompt("compare-airports")
+def compare_airports(icao_a: str, icao_b: str) -> str:
+    """Compare two ICAO codes with explicit rules when one is missing from the catalog."""
+    a = (icao_a or "").strip().upper() or "KHOU"
+    b = (icao_b or "").strip().upper() or "KIAH"
+    return f"""Compare {a} and {b}:
+1. Optionally read reference://demo-airport-hints or call get_demo_airport_hints() (same hints only).
+2. On the bigquery server, call get_demo_airport for BOTH codes.
+3. If either code has no catalog row, state that clearly for that code—do NOT invent alternatives (do not substitute DFW or any other hub).
+4. For each code that exists in the catalog, on the flight server call get_airport_flight_counts; add brief arrival/departure samples only if comparing disruption.
+5. Present side by side with evidence from tools only: which is busier or more disrupted."""
 
 
 def _row_to_jsonable(row: bigquery.table.Row) -> dict[str, Any]:

@@ -19,7 +19,7 @@
       --text:#1e293b;--dim:#475569;--mid:#334155;--heading:#0f172a;--link:#0369a1;
     }
     html{scroll-behavior:smooth}
-    body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+    body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
     body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.02;
       background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
     body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -40,13 +40,13 @@
     .ey::before{content:'';width:24px;height:1px;background:var(--cyan)}
     h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.2rem,5vw,3.5rem);font-weight:900;text-transform:uppercase;letter-spacing:-.02em;color:var(--heading);line-height:1;margin-bottom:.75rem}
     h1 .acc{color:var(--amber)}
-    .hs{color:var(--mid);font-size:.95rem;max-width:640px;line-height:1.75;margin-bottom:1.25rem}
+    .hs{color:var(--mid);font-size:1.05rem;max-width:640px;line-height:1.75;margin-bottom:1.25rem}
     .hk{display:flex;flex-wrap:wrap;gap:.5rem}
     .pill{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.08em;padding:.25rem .65rem;border:1px solid;border-radius:2px;background:#fff}
     .pa{border-color:var(--adim);color:var(--amber)}.pc{border-color:var(--cdim);color:var(--cyan)}.pg{border-color:var(--gdim);color:var(--green)}.pp{border-color:var(--pdim);color:var(--purple)}
     .toc{background:var(--panel);border:1px solid var(--border);padding:1.25rem 1.5rem;margin-bottom:2.5rem;border-radius:8px}
     .toc-t{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:.85rem}
-    .toc a{font-size:.82rem;color:var(--link);text-decoration:none;display:block;padding:.2rem 0;transition:color .15s}
+    .toc a{font-size:.9rem;color:var(--link);text-decoration:none;display:block;padding:.25rem 0;transition:color .15s}
     .toc a:hover{color:var(--heading)}.toc a span{color:var(--amber);margin-right:.5rem;font-family:'Share Tech Mono',monospace;font-size:.75rem}
     h2{font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:900;text-transform:uppercase;color:var(--heading);letter-spacing:-.01em;margin:2.5rem 0 1.25rem}
     .card{border:1px solid var(--border);background:#fff;margin-bottom:1.25rem;overflow:hidden;border-radius:8px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
@@ -62,8 +62,8 @@
     .pb{padding:1.25rem}
     .ll{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:.6rem;margin-top:.9rem}
     .ll:first-child{margin-top:0}
-    pre{background:var(--panel2);border:1px solid var(--border);padding:1.1rem 1.4rem;font-family:'Share Tech Mono',monospace;font-size:.8rem;line-height:2.1;color:var(--heading);overflow-x:auto;white-space:pre;margin:.6rem 0;border-radius:6px}
-    code{font-family:'Share Tech Mono',monospace;font-size:.8rem;background:var(--cbg);color:var(--cyan);padding:.12rem .45rem;border-radius:4px}
+    pre{background:var(--panel2);border:1px solid var(--border);padding:1.1rem 1.4rem;font-family:'Share Tech Mono',monospace;font-size:.86rem;line-height:2.1;color:var(--heading);overflow-x:auto;white-space:pre;margin:.6rem 0;border-radius:6px}
+    code{font-family:'Share Tech Mono',monospace;font-size:.86rem;background:var(--cbg);color:var(--cyan);padding:.12rem .45rem;border-radius:4px}
     .c{color:#0e7490;font-weight:600}.a{color:#b45309;font-weight:600}.g{color:#047857;font-weight:600}.p{color:#5b21b6;font-weight:600}.r{color:#be123c;font-weight:600}.d{color:#64748b}.w{color:#0f172a;font-weight:600}
     .mx{background:var(--panel);border-left:3px solid var(--purple);padding:1rem 1.25rem;margin:.75rem 0;font-size:.88rem;line-height:1.75;color:var(--text);border-radius:0 6px 6px 0}
     .mxl{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:.5rem}
@@ -98,6 +98,10 @@
     footer{border-top:1px solid var(--border);margin-top:4rem;padding:1.75rem 2.5rem;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;background:var(--bg)}
     .fl{font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--amber)}
     .fr{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--dim)}
+    .arch{margin:2rem 0}
+    .arch-cap{font-size:1.02rem;color:var(--mid);line-height:1.75;margin-top:1.25rem;max-width:760px}
+    .arch-cap code{font-size:.92rem;padding:.15rem .5rem}
+    .arch-svg{width:100%;max-width:960px;height:auto;display:block;margin:0 auto;border:1px solid var(--border);border-radius:8px;background:linear-gradient(180deg,#fff 0%,var(--panel) 100%);box-shadow:0 1px 2px rgba(15,23,42,.04)}
     @media(max-width:680px){nav{padding:.85rem 1.25rem}.nlinks{display:none}.page{padding:2rem 1.25rem 4rem}.tc,.s3{grid-template-columns:1fr}footer{flex-direction:column;gap:.75rem;text-align:center}}
   </style>
 </head>
@@ -105,7 +109,7 @@
 <nav>
   <div class="nl"><div class="np"></div>GEORGEJINU-LABS / AERO-REF</div>
   <div class="nlinks">
-    <a href="#phase0">Startup</a><a href="#phase1">Discovery</a><a href="#phase2">LLM Calls</a>
+    <a href="#architecture">Arch</a><a href="#phase0">Startup</a><a href="#phase1">Discovery</a><a href="#phase2">LLM Calls</a>
     <a href="#loop">The Loop</a><a href="#tokens">Tokens</a><a href="#maxsteps">max_steps</a>
     <a href="#second-turn">Turn 2</a><a href="#stack">Summary</a>
   </div>
@@ -121,7 +125,7 @@
 <div class="hero">
   <div class="ey">Multi-Server Agentic AI &middot; Local Inference</div>
   <h1>AERO-REF &mdash; <span class="acc">Under the Hood</span></h1>
-  <p class="hs">A phase-by-phase walkthrough of every log line from a real agent run &mdash; mapped to the exact component that produced it. Two MCP servers, six tools, one local LLM, zero cloud inference.</p>
+  <p class="hs">A phase-by-phase walkthrough of every log line from a real agent run &mdash; mapped to the exact component that produced it. Two MCP stdio servers, LangChain tools (flight boards + BigQuery catalog), one local LLM, zero cloud inference for the model.</p>
   <div class="hk">
     <span class="pill pa">qwen2.5:3b &middot; Ollama</span>
     <span class="pill pc">LangGraph &middot; mcp-use</span>
@@ -132,8 +136,9 @@
 
 <div class="toc">
   <div class="toc-t">// Contents</div>
+  <a href="#architecture"><span>AD</span>Architecture &mdash; data flow (diagram)</a>
   <a href="#phase0"><span>00</span>App Startup &mdash; two MCP servers launch as subprocesses</a>
-  <a href="#phase1"><span>01</span>Tool Discovery &mdash; mcp-use auto-wraps 6 tools for LangChain</a>
+  <a href="#phase1"><span>01</span>Tool Discovery &mdash; tools, resources, and prompts via mcp-use</a>
   <a href="#phase2"><span>02</span>LLM Call #1 &mdash; qwen2.5 reads 1,219-token context, picks first tool</a>
   <a href="#phase3"><span>03</span>BigQuery tool fires &mdash; catalog lookup returns KIAH metadata</a>
   <a href="#phase4"><span>04</span>LLM Calls #2 and #3 &mdash; redundant lookup, then flight counts call</a>
@@ -144,6 +149,129 @@
   <a href="#maxsteps"><span>09</span>max_steps &mdash; the safety brake, when it fires, how to handle it</a>
   <a href="#second-turn"><span>10</span>Turn 2 &mdash; KHOU missing from catalog, agent goes off-rails</a>
   <a href="#stack"><span>11</span>Component Summary &mdash; every piece and what it did in this run</a>
+</div>
+
+<h2 id="architecture">System architecture</h2>
+<div class="arch">
+  <div class="card">
+    <div class="pb2 bs"><span class="bnum">AD</span> End-to-end data flow &mdash; how the pieces connect</div>
+    <div class="pb">
+      <svg class="arch-svg" viewBox="0 0 920 756" xmlns="http://www.w3.org/2000/svg" aria-labelledby="archTitle" role="img">
+        <title id="archTitle">aero-ref architecture: Ollama, MCPAgent, mcp-use, MCP tools resources and prompts, two FastMCP servers</title>
+        <defs>
+          <marker id="archArrow" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#475569"/>
+          </marker>
+          <marker id="archArrowFlight" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#047857"/>
+          </marker>
+          <marker id="archArrowBq" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#0e7490"/>
+          </marker>
+          <marker id="archArrowRes" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#6d28d9"/>
+          </marker>
+          <marker id="archArrowPr" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#c2410c"/>
+          </marker>
+          <linearGradient id="boxGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#f1f5f9"/>
+          </linearGradient>
+        </defs>
+        <text x="460" y="34" text-anchor="middle" font-family="Barlow Condensed, Barlow, sans-serif" font-size="28" font-weight="800" fill="#0f172a" letter-spacing="0.03em">AERO-REF &mdash; HIGH LEVEL</text>
+        <text x="460" y="58" text-anchor="middle" font-family="Barlow, sans-serif" font-size="14" font-weight="600" fill="#334155" letter-spacing="0.06em">LOCAL AGENT &middot; MCP STDIO &middot; TOOLS + RESOURCES + PROMPTS</text>
+        <!-- Ollama -->
+        <rect x="230" y="72" width="460" height="56" rx="8" fill="url(#boxGrad)" stroke="#6d28d9" stroke-width="2"/>
+        <text x="460" y="98" text-anchor="middle" font-family="Barlow, sans-serif" font-size="18" font-weight="700" fill="#4c1d95">Ollama</text>
+        <text x="460" y="118" text-anchor="middle" font-family="Barlow, sans-serif" font-size="13" font-weight="500" fill="#1e293b">ChatOllama &rarr; local LLM (e.g. qwen2.5:3b)</text>
+        <line x1="460" y1="128" x2="460" y2="148" stroke="#64748b" stroke-width="2" marker-end="url(#archArrow)"/>
+        <!-- main.py -->
+        <rect x="150" y="150" width="620" height="92" rx="8" fill="url(#boxGrad)" stroke="#c2410c" stroke-width="2"/>
+        <text x="460" y="178" text-anchor="middle" font-family="Barlow, sans-serif" font-size="17" font-weight="700" fill="#9a3412">main.py &mdash; MCPAgent</text>
+        <text x="460" y="200" text-anchor="middle" font-family="Barlow, sans-serif" font-size="13" font-weight="500" fill="#1e293b">LangGraph + langchain-ollama + MCPClient</text>
+        <text x="460" y="220" text-anchor="middle" font-family="Barlow, sans-serif" font-size="12" font-weight="500" fill="#334155">After <tspan font-family="'Share Tech Mono',monospace" font-size="11">initialize</tspan>: optional <tspan font-family="'Share Tech Mono',monospace" font-size="11">prompts/get</tspan> on bigquery</text>
+        <text x="460" y="236" text-anchor="middle" font-family="Barlow, sans-serif" font-size="12" font-weight="500" fill="#334155">(<tspan font-family="'Share Tech Mono',monospace" font-size="11">AGENT_USE_MCP_PROMPTS</tspan>) &rarr; user message text &rarr; <tspan font-family="'Share Tech Mono',monospace" font-size="11">agent.run</tspan></text>
+        <line x1="460" y1="242" x2="460" y2="262" stroke="#64748b" stroke-width="2" marker-end="url(#archArrow)"/>
+        <!-- mcp-use -->
+        <rect x="150" y="264" width="620" height="76" rx="8" fill="url(#boxGrad)" stroke="#0e7490" stroke-width="2"/>
+        <text x="460" y="290" text-anchor="middle" font-family="Barlow, sans-serif" font-size="18" font-weight="700" fill="#0e7490">mcp-use</text>
+        <text x="460" y="312" text-anchor="middle" font-family="Barlow, sans-serif" font-size="13" font-weight="500" fill="#1e293b">stdio JSON-RPC &middot; one session per server in <tspan font-family="'Share Tech Mono',monospace" font-size="11">mcp_config.json</tspan></text>
+        <text x="460" y="330" text-anchor="middle" font-family="Barlow, sans-serif" font-size="12" font-weight="500" fill="#334155">Surfaces <tspan font-weight="700" fill="#0f172a">tools</tspan>, <tspan font-weight="700" fill="#0f172a">resources</tspan>, <tspan font-weight="700" fill="#0f172a">prompts</tspan> to LangChain (wrappers the LLM may call)</text>
+        <line x1="460" y1="340" x2="460" y2="358" stroke="#64748b" stroke-width="2" marker-end="url(#archArrow)"/>
+        <!-- MCP protocol strip -->
+        <text x="460" y="356" text-anchor="middle" font-family="Barlow, sans-serif" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.12em">MCP METHODS (PER SESSION)</text>
+        <rect x="88" y="368" width="200" height="36" rx="6" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
+        <text x="188" y="384" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="11" font-weight="600" fill="#0f172a">tools/call</text>
+        <text x="188" y="398" text-anchor="middle" font-family="Barlow, sans-serif" font-size="10" font-weight="500" fill="#475569">list + invoke</text>
+        <rect x="360" y="368" width="200" height="36" rx="6" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
+        <text x="460" y="384" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="11" font-weight="600" fill="#0f172a">resources/read</text>
+        <text x="460" y="398" text-anchor="middle" font-family="Barlow, sans-serif" font-size="10" font-weight="500" fill="#475569">URI &rarr; text</text>
+        <rect x="632" y="368" width="200" height="36" rx="6" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
+        <text x="732" y="384" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="11" font-weight="600" fill="#0f172a">prompts/get</text>
+        <text x="732" y="398" text-anchor="middle" font-family="Barlow, sans-serif" font-size="10" font-weight="500" fill="#475569">template + args</text>
+        <!-- Explicit routing: each MCP method → correct stdio session (tools/call fans out to BOTH servers) -->
+        <text x="460" y="412" text-anchor="middle" font-family="Barlow, sans-serif" font-size="11" font-weight="700" fill="#334155">mcp-use maps each call to the matching server&rsquo;s stdin/stdout session</text>
+        <line x1="188" y1="404" x2="188" y2="424" stroke="#047857" stroke-width="2.5" marker-end="none"/>
+        <line x1="188" y1="424" x2="220" y2="476" stroke="#047857" stroke-width="2.5" marker-end="url(#archArrowFlight)"/>
+        <line x1="188" y1="424" x2="700" y2="476" stroke="#0e7490" stroke-width="2.5" marker-end="url(#archArrowBq)"/>
+        <text x="200" y="442" font-family="Barlow, sans-serif" font-size="10" font-weight="600" fill="#047857">tools/call</text>
+        <text x="200" y="454" font-family="Barlow, sans-serif" font-size="9" font-weight="500" fill="#334155">&rarr; flight</text>
+        <text x="420" y="438" font-family="Barlow, sans-serif" font-size="10" font-weight="600" fill="#0e7490">tools/call</text>
+        <text x="420" y="450" font-family="Barlow, sans-serif" font-size="9" font-weight="500" fill="#334155">&rarr; bigquery</text>
+        <line x1="460" y1="404" x2="460" y2="424" stroke="#6d28d9" stroke-width="2" stroke-dasharray="5 4" marker-end="none"/>
+        <line x1="460" y1="424" x2="700" y2="476" stroke="#6d28d9" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#archArrowRes)"/>
+        <text x="472" y="432" font-family="Barlow, sans-serif" font-size="10" font-weight="600" fill="#5b21b6">resources/read</text>
+        <text x="472" y="444" font-family="Barlow, sans-serif" font-size="9" font-weight="500" fill="#334155">&rarr; bigquery only</text>
+        <line x1="732" y1="404" x2="732" y2="424" stroke="#c2410c" stroke-width="2" stroke-dasharray="5 4" marker-end="none"/>
+        <line x1="732" y1="424" x2="700" y2="476" stroke="#c2410c" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#archArrowPr)"/>
+        <text x="740" y="432" text-anchor="start" font-family="Barlow, sans-serif" font-size="10" font-weight="600" fill="#9a3412">prompts/get</text>
+        <text x="740" y="444" text-anchor="start" font-family="Barlow, sans-serif" font-size="9" font-weight="500" fill="#334155">&rarr; bigquery only</text>
+        <text x="460" y="470" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="9" font-weight="500" fill="#64748b">LangGraph tool node &rarr; mcp-use &rarr; tools/call JSON-RPC on the subprocess for that tool</text>
+        <!-- flight server -->
+        <rect x="36" y="476" width="368" height="128" rx="10" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+        <text x="220" y="502" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="20" font-weight="800" fill="#065f46" letter-spacing="0.08em">FLIGHT MCP</text>
+        <text x="220" y="524" text-anchor="middle" font-family="Barlow, sans-serif" font-size="13" font-weight="600" fill="#334155">uv run &rarr; flight_server.py (FastMCP)</text>
+        <text x="52" y="546" font-family="Barlow, sans-serif" font-size="12" font-weight="600" fill="#0f172a">Tools:</text>
+        <text x="110" y="546" font-family="'Share Tech Mono',monospace" font-size="11" font-weight="500" fill="#1e293b">get_airport_flights, arrivals, departures, counts</text>
+        <text x="52" y="566" font-family="Barlow, sans-serif" font-size="12" font-weight="500" fill="#475569">Resources / prompts: none in this demo</text>
+        <text x="52" y="586" font-family="Barlow, sans-serif" font-size="12" font-weight="500" fill="#1e293b">Live boards &rarr; FlightAware AeroAPI (HTTPS)</text>
+        <line x1="220" y1="596" x2="220" y2="618" stroke="#64748b" stroke-width="2" marker-end="url(#archArrow)"/>
+        <!-- bigquery server -->
+        <rect x="516" y="476" width="368" height="168" rx="10" fill="#ffffff" stroke="#0e7490" stroke-width="2"/>
+        <text x="700" y="502" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="20" font-weight="800" fill="#0e7490" letter-spacing="0.08em">BIGQUERY MCP</text>
+        <text x="700" y="524" text-anchor="middle" font-family="Barlow, sans-serif" font-size="13" font-weight="600" fill="#334155">uv run &rarr; bigquery_server.py (FastMCP)</text>
+        <text x="532" y="546" font-family="Barlow, sans-serif" font-size="12" font-weight="600" fill="#0f172a">Tools:</text>
+        <text x="590" y="546" font-family="'Share Tech Mono',monospace" font-size="11" font-weight="500" fill="#1e293b">list_demo_airports, get_demo_airport, get_demo_airport_hints</text>
+        <text x="532" y="566" font-family="Barlow, sans-serif" font-size="12" font-weight="600" fill="#0f172a">Resource:</text>
+        <text x="610" y="566" font-family="'Share Tech Mono',monospace" font-size="11" font-weight="500" fill="#1e293b">reference://demo-airport-hints</text>
+        <text x="532" y="586" font-family="Barlow, sans-serif" font-size="12" font-weight="600" fill="#0f172a">Prompts:</text>
+        <text x="610" y="586" font-family="'Share Tech Mono',monospace" font-size="11" font-weight="500" fill="#1e293b">airport-summary, compare-airports</text>
+        <text x="532" y="608" font-family="Barlow, sans-serif" font-size="11" font-weight="500" fill="#475569">Hints: same text via resource read or no-arg tool (agent-friendly)</text>
+        <text x="532" y="628" font-family="Barlow, sans-serif" font-size="12" font-weight="500" fill="#1e293b">Catalog rows &rarr; Google BigQuery API</text>
+        <line x1="700" y1="636" x2="700" y2="658" stroke="#64748b" stroke-width="2" marker-end="url(#archArrow)"/>
+        <!-- external APIs -->
+        <rect x="36" y="662" width="368" height="52" rx="8" fill="#d1fae5" stroke="#047857" stroke-width="1.5"/>
+        <text x="220" y="684" text-anchor="middle" font-family="Barlow, sans-serif" font-size="15" font-weight="700" fill="#065f46">FlightAware AeroAPI</text>
+        <text x="220" y="702" text-anchor="middle" font-family="Barlow, sans-serif" font-size="12" font-weight="500" fill="#14532d">External HTTPS &middot; API key from env</text>
+        <rect x="516" y="662" width="368" height="52" rx="8" fill="#cffafe" stroke="#0e7490" stroke-width="1.5"/>
+        <text x="700" y="684" text-anchor="middle" font-family="Barlow, sans-serif" font-size="15" font-weight="700" fill="#0e7490">Google BigQuery</text>
+        <text x="700" y="702" text-anchor="middle" font-family="Barlow, sans-serif" font-size="12" font-weight="500" fill="#134e4a">GCP project + ADC &middot; demo airports table</text>
+        <text x="460" y="738" text-anchor="middle" font-family="Barlow, sans-serif" font-size="12" font-weight="600" fill="#475569" letter-spacing="0.04em">No cloud LLM in this stack &mdash; only local inference and data APIs</text>
+      </svg>
+      <p class="arch-cap">
+        <strong style="color:var(--cyan)">Tools:</strong> BigQuery catalog + static hints tool + four flight-board tools. Results return as JSON and are appended to the chat for the next model call.
+        <strong style="color:var(--purple)">Resources:</strong> <code>reference://demo-airport-hints</code> is registered on the BigQuery server (<code>resources/list</code>, <code>resources/read</code>). The same copy is available as <code>get_demo_airport_hints()</code> with no arguments so small models are not forced to synthesize a URI (mcp-use maps resource reads to LangChain tools that validate <code>uri</code>).
+        <strong style="color:var(--amber)">Prompts:</strong> <code>airport-summary</code> and <code>compare-airports</code> are server-side workflow templates. <code>main.py</code> can call <code>prompts/get</code> after connect and pass the returned text to <code>agent.run</code> when <code>AGENT_USE_MCP_PROMPTS=1</code>.
+        <strong style="color:var(--green)">Transport:</strong> agent &harr; MCP is stdio JSON-RPC; only the flight server calls AeroAPI over the public internet.
+        <strong style="color:var(--mid)">Diagram:</strong> solid green/cyan lines show <code>tools/call</code> reaching <strong>both</strong> subprocesses (mcp-use picks the session by tool); purple and orange dashed lines show <code>resources/read</code> and <code>prompts/get</code> on the <strong>bigquery</strong> session only.
+      </p>
+      <div class="mx">
+        <div class="mxl">Handshake reminder</div>
+        <p>Every session runs <code>initialize</code>, then <code>tools/list</code>, <code>resources/list</code>, and <code>prompts/list</code>. Your log may show &ldquo;0 resources / 0 prompts&rdquo; for an older build; current <code>bigquery_server.py</code> advertises one resource URI and two prompts on that server.</p>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ===== 00 ===== -->
@@ -157,12 +285,14 @@
 <span class="g">StdioConnectionManager connected successfully</span>
 <span class="d">&rarr; initialize  (16.826s)  &larr; cold uv dep resolution + subprocess startup</span>
 <span class="d">&rarr; tools/list  (0.008s)</span>   <span class="g">&larr; 4 tools returned</span>
-<span class="d">&rarr; resources/list (0.004s), prompts/list (0.003s)  &larr; both empty</span>
+<span class="d">&rarr; resources/list, prompts/list  &larr; flight: none in this demo</span>
 <span class="g">MCP session initialized with 4 tools, 0 resources, 0 prompts</span>
 
-<span class="d">--- same sequence repeats for bigquery_server.py (21.006s init) ---</span>
-<span class="g">MCP session initialized with 2 tools, 0 resources, 0 prompts</span>
-<span class="g">&#10003; Created 2 new sessions  |  6 tools total across both servers</span></pre>
+<span class="d">--- same sequence for bigquery_server.py (cold init varies) ---</span>
+<span class="d">&rarr; resources/list  &larr; e.g. reference://demo-airport-hints</span>
+<span class="d">&rarr; prompts/list  &larr; airport-summary, compare-airports</span>
+<span class="g">MCP session initialized with 3 tools, 1 resource, 2 prompts</span>
+<span class="g">&#10003; Created 2 new sessions  &mdash; mcp-use then wraps MCP tools + resources + prompts for LangChain</span></pre>
     <div class="mx">
       <div class="mxl">What this means</div>
       <p><code>MCPClient.from_dict()</code> reads <code>mcp_config.json</code> and <strong>spawns each server as a local subprocess</strong> via <code>uv run</code>. Communication is over <strong>stdio pipes</strong> &mdash; not HTTP. This is the MCP &ldquo;stdio transport&rdquo; mode. The protocol then does an MCP handshake: <code>initialize</code> &rarr; <code>tools/list</code> &rarr; <code>resources/list</code> &rarr; <code>prompts/list</code>.</p>
@@ -184,26 +314,32 @@
 
 <!-- ===== 01 ===== -->
 <div class="card" id="phase1">
-  <div class="pb2 bd2"><span class="bnum">01</span> Tool discovery &mdash; mcp-use auto-wraps 6 tools for LangChain</div>
+  <div class="pb2 bd2"><span class="bnum">01</span> Tool discovery &mdash; mcp-use wraps tools, resources, and prompts</div>
   <div class="pb">
-    <div class="ll">From your log:</div>
+    <div class="ll">Representative log (current <code>bigquery_server.py</code> + <code>flight_server.py</code>):</div>
 <pre><span class="c">Loaded 4 new tools for connector (flight server):</span>
   <span class="a">get_airport_flights</span>        <span class="d">&larr; full board: arrivals + departures + scheduled</span>
   <span class="a">get_airport_arrivals</span>       <span class="d">&larr; recent landings, ordered by actual_on desc</span>
   <span class="a">get_airport_departures</span>     <span class="d">&larr; recent takeoffs, ordered by actual_off desc</span>
   <span class="a">get_airport_flight_counts</span>  <span class="d">&larr; summary counts only &mdash; fastest snapshot</span>
 
-<span class="c">Loaded 2 new tools for connector (bigquery server):</span>
-  <span class="a">list_demo_airports</span>  <span class="d">&larr; SELECT * FROM aero_reference.airports LIMIT ?</span>
-  <span class="a">get_demo_airport</span>    <span class="d">&larr; WHERE airport_code = ? (ICAO / IATA / LID, case-insensitive)</span>
+<span class="c">Loaded 3 new tools for connector (bigquery server):</span>
+  <span class="a">list_demo_airports</span>       <span class="d">&larr; catalog scan with limit</span>
+  <span class="a">get_demo_airport</span>         <span class="d">&larr; lookup by ICAO / IATA / LID</span>
+  <span class="a">get_demo_airport_hints</span>   <span class="d">&larr; tiny static ICAO hint string (no args)</span>
 
-<span class="g">&#x1F6E0;  Created 6 LangChain tools from client: 6 tools, 0 resources, 0 prompts</span>
-<span class="g">&#x1F9F0;  Found 6 tools across all connectors</span>
-<span class="g">&#x1F9E0;  Agent ready with tools: get_airport_flights, get_airport_arrivals...</span></pre>
+<span class="c">Plus from bigquery (same connector), as LangChain-callable wrappers:</span>
+  <span class="a">1 resource tool</span>   <span class="d">&larr; read by URI (same payload as hints tool)</span>
+  <span class="a">2 prompt tools</span>    <span class="d">&larr; airport-summary, compare-airports</span>
+
+<span class="g">&#x1F6E0;  Created LangChain tools from client: 7 tools, 1 resources, 2 prompts</span>
+<span class="g">&#x1F9F0;  Found N tools across all connectors</span>
+<span class="g">&#x1F9E0;  Agent ready (names include flight + bigquery + prompt wrappers)</span></pre>
     <div class="mx">
       <div class="mxl">What this means</div>
-      <p><code>mcp-use</code> sent the MCP <code>tools/list</code> protocol message to each server and <strong>automatically converted every tool schema into a LangChain <code>StructuredTool</code></strong>. This is the core job of mcp-use &mdash; without it, you&rsquo;d write a LangChain tool wrapper for every MCP tool manually.</p>
-      <p>The LLM has no awareness these are MCP tools. It simply receives their <strong>name + description strings injected into the system prompt</strong> and picks them by text matching at inference time.</p>
+      <p><code>mcp-use</code> runs <code>tools/list</code>, <code>resources/list</code>, and <code>prompts/list</code> during init. It converts <strong>MCP tools</strong> into LangChain <code>StructuredTool</code>s, and typically exposes <strong>resources</strong> and <strong>prompts</strong> as additional callable tools the model can invoke.</p>
+      <p><code>main.py</code> can also call <code>prompts/get</code> directly on the bigquery session to build the <strong>user message</strong> before <code>agent.run</code> &mdash; that path does not rely on the LLM to pick a prompt tool.</p>
+      <p>The LLM still chooses among whatever names land in the system prompt; it matches by text, not by &ldquo;understanding&rdquo; MCP.</p>
     </div>
   </div>
 </div>
@@ -221,6 +357,8 @@
         <span class="c">- get_airport_flight_counts: Summary counts by status...</span>
         <span class="c">- list_demo_airports: List rows from the demo airports table...</span>
         <span class="c">- get_demo_airport: Look up one airport by code...</span>
+        <span class="c">- get_demo_airport_hints: Static ICAO hints (no args)...</span>
+        <span class="d">        ... plus resource-read + prompt wrappers from bigquery (names vary)</span>
         <span class="p">You can call tools on two MCP servers:
         1) bigquery &mdash; catalog  2) flight &mdash; live AeroAPI
         Typical flow: airport metadata from BigQuery when useful,
@@ -242,7 +380,7 @@ output_tokens: <span class="w">18</span>      <span class="d">&larr; just the JS
 total_tokens:  <span class="w">1,237</span></pre>
     <div class="mx">
       <div class="mxl">What this means</div>
-      <p><code>langchain-ollama</code> (ChatOllama) sent this prompt to <code>localhost:11434</code>. The LLM read all 6 tool descriptions and matched the user&rsquo;s request for &ldquo;airport reference&rdquo; against <code>list_demo_airports: List rows from the demo airports table</code>. <strong>Pure text matching &mdash; no deeper reasoning.</strong></p>
+      <p><code>langchain-ollama</code> (ChatOllama) sent this prompt to <code>localhost:11434</code>. The LLM read the tool descriptions in the system prompt (more than in the original six-tool log, once resources and prompts are wrapped) and matched &ldquo;airport reference&rdquo; against <code>list_demo_airports</code>. <strong>Pure text matching &mdash; no deeper reasoning.</strong></p>
       <p>The 357-second time is dominated by <strong>model cold load</strong>: <code>load_duration: 33.4 seconds</code> + <code>prompt_eval_duration: 316 seconds</code> to process 1,219 input tokens at CPU speed. Only 18 tokens generated.</p>
       <p>LangGraph sees <code>tool_calls</code> is not empty &rarr; does <strong>not</strong> route to END &rarr; routes to the <code>tools</code> node. The loop continues.</p>
     </div>

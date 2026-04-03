@@ -16,7 +16,9 @@ When FLIGHT_BOOKING_AGENT_TRACE=1 (or WEATHER_AGENT_TRACE=1):
   - After each agent.run: system prompt + conversation history on stderr (truncated)
 
 Optional env:
-  AGENT_QUERY, SECOND_AGENT_QUERY (natural user-style questions; tool names live in system instructions),
+  AGENT_QUERY, SECOND_AGENT_QUERY (natural user-style questions when MCP prompts are off),
+  AGENT_USE_MCP_PROMPTS=1 — first/second user messages from bigquery MCP prompts (see README),
+  AGENT_PROMPT_FIRST, AGENT_PROMPT_ICAO, SECOND_AGENT_PROMPT, SECOND_PROMPT_ICAO_A, SECOND_PROMPT_ICAO_B,
   OLLAMA_MODEL, OLLAMA_BASE_URL, AGENT_MAX_STEPS
 """
 
@@ -62,6 +64,7 @@ def _configure_trace_logging() -> bool:
 _TRACE = _configure_trace_logging()
 
 from langchain_ollama import ChatOllama
+from mcp.types import GetPromptResult, TextContent
 from mcp_use import MCPAgent, MCPClient
 
 _SCENARIO_INSTRUCTIONS = """
@@ -78,7 +81,29 @@ limits unless the user asks for more. Say whether facts came from BigQuery vs li
 
 User messages are normal questions (e.g. delays at an airport, comparing two hubs). You choose tools —
 do not ask the user to name MCP tools.
+
+When the user message was produced from an MCP prompt (server-side template), follow that workflow
+exactly—especially any rule about missing catalog rows and not substituting other airports.
 """
+
+
+def _prompt_result_to_user_text(result: GetPromptResult) -> str:
+    parts: list[str] = []
+    for pm in result.messages:
+        c = pm.content
+        if isinstance(c, TextContent):
+            parts.append(c.text)
+        else:
+            parts.append(str(c))
+    text = "\n\n".join(parts).strip()
+    return text if text else "(empty MCP prompt)"
+
+
+def _env_flag(name: str, default: bool = True) -> bool:
+    raw = os.getenv(name)
+    if raw is None or raw.strip() == "":
+        return default
+    return raw.strip().lower() in ("1", "true", "yes")
 
 
 def _print_injected_context(agent: MCPAgent, title: str) -> None:
@@ -167,13 +192,43 @@ async def _run() -> None:
 
     await agent.initialize()
     try:
+        use_prompts = _env_flag("AGENT_USE_MCP_PROMPTS", True)
+        bq = client.get_session("bigquery")
+
+        if use_prompts:
+            p1 = os.getenv("AGENT_PROMPT_FIRST", "airport-summary").strip() or "airport-summary"
+            icao = os.getenv("AGENT_PROMPT_ICAO", "KIAH").strip() or "KIAH"
+            pr = await bq.get_prompt(p1, {"icao_code": icao})
+            query = _prompt_result_to_user_text(pr)
+            if _TRACE:
+                print(f"\n[AGENT_USE_MCP_PROMPTS] first prompt={p1!r} -> user message len={len(query)}\n", file=sys.stderr)
+
         out = await agent.run(query)
         print(out)
         if _TRACE:
             _print_injected_context(agent, "Context after first turn")
 
-        second = os.getenv("SECOND_AGENT_QUERY", "Compare Houston Hobby (KSFO) and Bush (KIAH): official names and cities from our catalog, "
-        "then contrast live flight counts and recent arrival and departure activity — which airport looks busier or more disrupted?").strip()
+        second = ""
+        if use_prompts:
+            p2 = os.getenv("SECOND_AGENT_PROMPT", "compare-airports").strip() or "compare-airports"
+            a = os.getenv("SECOND_PROMPT_ICAO_A", "KHOU").strip() or "KHOU"
+            b = os.getenv("SECOND_PROMPT_ICAO_B", "KIAH").strip() or "KIAH"
+            pr2 = await bq.get_prompt(p2, {"icao_a": a, "icao_b": b})
+            second = _prompt_result_to_user_text(pr2)
+            if _TRACE:
+                print(
+                    f"\n[AGENT_USE_MCP_PROMPTS] second prompt={p2!r} -> user message len={len(second)}\n",
+                    file=sys.stderr,
+                )
+        else:
+            second = os.getenv(
+                "SECOND_AGENT_QUERY",
+                "Compare Houston Hobby (KHOU) and Bush (KIAH): official names and cities from our catalog, "
+                "then contrast live flight counts and recent arrival and departure activity — which airport "
+                "looks busier or more disrupted? If either code is missing from the catalog, say so clearly "
+                "and do not substitute another airport.",
+            ).strip()
+
         if second:
             out2 = await agent.run(second)
             print(out2)
