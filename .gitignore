@@ -21,7 +21,8 @@ venv/
 env/
 
 # Local env files (keep .env.example committed as the template)
-.env.local
+.env
+.env.*
 
 # OS / editor
 .DS_Store
